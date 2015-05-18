@@ -1,0 +1,12 @@
+import javax.swing.JFrame;
+
+public static main(String[] args) {
+  JFrame frame = new JFrame();
+
+  frame.setSize(300, 400);
+  frame.setTitle("Game");
+  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+  frame.setVisible(true);
+}
