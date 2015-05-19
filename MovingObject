@@ -1,0 +1,53 @@
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.Color;
+
+
+/**
+A car shape that can be positioned anywhere on the screen.
+ */
+public class MovingObject 
+{
+    private double xLeft;
+    private double yTop;
+    private Color color;
+
+    /**
+    Constructs an object with a given top left corner.
+    @param x the x coordinate of the top left corner
+    @param y the y coordinate of the top left corner
+     */
+    public MovingObject(int x, int y, Color color)
+    {
+        xLeft = x;
+        yTop = y;
+        this.color = color;
+    }
+
+    /**
+    Draws the object.
+    @param g2 the graphics context
+     */
+    public void draw(Graphics2D g2)
+    {
+        Ellpise2D circle = new Ellipse(xLeft, yRight, 50, 50);
+        
+        g2.draw(circle);
+
+        g2.setPaint(Color.black);
+        g2.fill(circle);
+    }
+
+    public void moveTo(double x, double y) {
+        xLeft = x;
+        yTop = y;
+    }
+    
+    public double getX() {
+        return xLeft;
+    }
+    
+    public double getY() {
+        return yTop;
+    }
+}
