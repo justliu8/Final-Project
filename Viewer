@@ -8,8 +8,9 @@ import java.awt.event.KeyEvent;
 
 public class MovingObjectViewer
 {
+    private static boolean left = false, right = false, up = false, down = false;
     private static final double diagonalMoveDistance = 5 / Math.sqrt(2);
-    
+
     public static void main(String[] args)
     {
         JFrame frame = new JFrame();
@@ -26,42 +27,6 @@ public class MovingObjectViewer
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
-
-            }
-        }
-
-        class MotionWithKeyListener implements KeyListener {
-            private boolean left = false, right = false, up = false, down = false;
-            public void keyPressed(KeyEvent e)
-            {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT)
-                    left = true;
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-                    right = true;
-                else if (e.getKeyCode() == KeyEvent.VK_UP)
-                    up = true;
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-                    down = true;
-
-                move();
-            }
-
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT)
-                    left = false;
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-                    right = false;
-                else if (e.getKeyCode() == KeyEvent.VK_UP)
-                    up = false;
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-                    down = false;
-                    
-                move();
-            }
-
-            public void keyTyped(KeyEvent e) {}
-
-            public void move() {
                 if (left && up)
                     component.moveBy(-diagonalMoveDistance, -diagonalMoveDistance);
                 else if (left && down)
@@ -81,12 +46,39 @@ public class MovingObjectViewer
             }
         }
 
+        class MotionWithKeyListener implements KeyListener {
+            public void keyPressed(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                    left = true;
+                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    right = true;
+                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                    up = true;
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    down = true;
+            }
+
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                    left = false;
+                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    right = false;
+                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                    up = false;
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    down = false;
+            }
+
+            public void keyTyped(KeyEvent e) {}
+        }
+
         ActionListener listener = new TimeListener();
 
         KeyListener keyListener = new MotionWithKeyListener();
         component.addKeyListener(keyListener);
 
-        final int DELAY = 10;
+        final int DELAY = 1000 / 60;//60 frames per second
         Timer t = new Timer(DELAY, listener);
         t.start();
     }
