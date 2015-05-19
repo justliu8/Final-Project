@@ -4,7 +4,7 @@ import java.awt.Color;
 
 
 /**
-A car shape that can be positioned anywhere on the screen.
+An object shape that can be positioned anywhere on the screen.
  */
 public class MovingObject 
 {
