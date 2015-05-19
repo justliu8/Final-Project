@@ -30,7 +30,7 @@ public class MovingObject
      */
     public void draw(Graphics2D g2)
     {
-        Ellpise2D circle = new Ellipse(xLeft, yRight, 50, 50);
+        Ellipse2D.Double circle = new Ellipse2D.Double(xLeft, yTop, 50, 50);
         
         g2.draw(circle);
 
