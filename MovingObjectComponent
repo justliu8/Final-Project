@@ -1,0 +1,29 @@
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Rectangle;
+
+import javax.swing.JComponent;
+
+/**
+This component draws a shape.
+ */
+public class MovingObjectComponent extends JComponent 
+{
+    private MovingObject obj1;
+    
+    public MovingObjectComponent(int frameWidth, int frameHeight) {
+        obj1 = new MovingObject(frameWidth / 2 - 60, frameHeight / 2 - 30, Color.red);
+    }
+
+    public void paintComponent(Graphics g)
+    {
+        Graphics2D g2 = (Graphics2D) g;
+        obj1.draw(g2);
+    }
+
+    public void moveBy(double dx, double dy) {
+        obj1.moveTo(obj1.getX() + dx, obj1.getY() + dy);
+        repaint();
+    }
+}
