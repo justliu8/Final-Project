@@ -1,12 +1,93 @@
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
-public static main(String[] args) {
-  JFrame frame = new JFrame();
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 
-  frame.setSize(300, 400);
-  frame.setTitle("Game");
-  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+public class MovingObjectViewer
+{
+    private static final double diagonalMoveDistance = 5 / Math.sqrt(2);
+    
+    public static void main(String[] args)
+    {
+        JFrame frame = new JFrame();
 
+        frame.setSize(400, 300);
+        frame.setTitle("Moving Car");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-  frame.setVisible(true);
+        MovingObjectComponent component = new MovingObjectComponent(frame.getWidth(), frame.getHeight());
+        frame.add(component);
+        component.setFocusable(true);
+
+        frame.setVisible(true);
+
+        class TimeListener implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        }
+
+        class MotionWithKeyListener implements KeyListener {
+            private boolean left = false, right = false, up = false, down = false;
+            public void keyPressed(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                    left = true;
+                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    right = true;
+                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                    up = true;
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    down = true;
+
+                move();
+            }
+
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                    left = false;
+                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    right = false;
+                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                    up = false;
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    down = false;
+                    
+                move();
+            }
+
+            public void keyTyped(KeyEvent e) {}
+
+            public void move() {
+                if (left && up)
+                    component.moveBy(-diagonalMoveDistance, -diagonalMoveDistance);
+                else if (left && down)
+                    component.moveBy(-diagonalMoveDistance, diagonalMoveDistance);
+                else if (right && up)
+                    component.moveBy(diagonalMoveDistance, -diagonalMoveDistance);
+                else if (right && down)
+                    component.moveBy(diagonalMoveDistance, diagonalMoveDistance);
+                else if (left)
+                    component.moveBy(-5, 0);
+                else if (right)
+                    component.moveBy(5, 0);
+                else if (up)
+                    component.moveBy(0, -5);
+                else if (down)
+                    component.moveBy(0, 5);
+            }
+        }
+
+        ActionListener listener = new TimeListener();
+
+        KeyListener keyListener = new MotionWithKeyListener();
+        component.addKeyListener(keyListener);
+
+        final int DELAY = 10;
+        Timer t = new Timer(DELAY, listener);
+        t.start();
+    }
 }
