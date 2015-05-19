@@ -16,7 +16,7 @@ public class MovingObjectViewer
         JFrame frame = new JFrame();
 
         frame.setSize(400, 300);
-        frame.setTitle("Moving Car");
+        frame.setTitle("Moving Object");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         MovingObjectComponent component = new MovingObjectComponent(frame.getWidth(), frame.getHeight());
