@@ -1,0 +1,59 @@
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+
+import javax.swing.JComponent;
+
+/**
+This component draws a shape.
+ */
+public class UserObjectComponent extends JComponent 
+{
+    private UserObject user;
+    private boolean left, right, up, down;
+
+    public UserObjectComponent(int frameWidth, int frameHeight) {
+        user = new UserObject(frameWidth / 2, frameHeight / 2, Color.red);
+    }
+
+    public void paintComponent(Graphics g)
+    {
+        Graphics2D g2 = (Graphics2D) g;
+        
+        user.draw(g2);
+
+        paintArrowKeys(g2);
+    }
+
+    public void moveBy(double dx, double dy) {
+        double newX = user.getX() + dx;
+        double newY = user.getY() + dy;
+        if(newX <= getWidth() - 25 && newX >= 25) 
+            user.moveBy(dx, 0);
+        if(newY <= getHeight() - 25 && newY >= 25) 
+            user.moveBy(0, dy);
+        repaint();
+    }
+
+    /**
+     * For testing movement
+     */
+    public void updateArrowKeys(boolean left, boolean right, boolean up, boolean down) {
+        this.left = left;
+        this.right = right;
+        this.up = up;
+        this.down = down;
+        repaint();
+    }
+
+    /**
+     * For testing movement
+     * Displays which arrow keys are pressed
+     */
+    public void paintArrowKeys(Graphics g2) {
+        g2.drawString("Left: " + left, 50, 100);
+        g2.drawString("Right: " + right, 50, 200);
+        g2.drawString("Up: " + up, 50, 300);
+        g2.drawString("Down: " + down, 50, 400);
+    }
+}
