@@ -15,9 +15,10 @@ public class MovingObjectViewer
     {
         JFrame frame = new JFrame();
 
-        frame.setSize(400, 300);
+        frame.setSize(800, 650);
         frame.setTitle("Moving Object");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
 
         MovingObjectComponent component = new MovingObjectComponent(frame.getWidth(), frame.getHeight());
         frame.add(component);
