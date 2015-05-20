@@ -6,7 +6,7 @@ import java.awt.Color;
 /**
 A car shape that can be positioned anywhere on the screen.
  */
-public class MovingObject 
+public class UserObject 
 {
     private double xLeft;
     private double yTop;
@@ -17,7 +17,7 @@ public class MovingObject
     @param x the x coordinate of the top left corner
     @param y the y coordinate of the top left corner
      */
-    public MovingObject(int x, int y, Color color)
+    public UserObject(int x, int y, Color color)
     {
         xLeft = x;
         yTop = y;
@@ -31,7 +31,7 @@ public class MovingObject
     public void draw(Graphics2D g2)
     {
         Ellipse2D.Double circle = new Ellipse2D.Double(xLeft - 25, yTop - 25, 50, 50);
-        
+        //could be any object, doesn't have to be an ellipse
         g2.draw(circle);
 
         g2.setPaint(Color.black);
