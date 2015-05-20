@@ -11,9 +11,9 @@ This component draws a shape.
 public class MovingObjectComponent extends JComponent 
 {
     private MovingObject obj1;
-    
+
     public MovingObjectComponent(int frameWidth, int frameHeight) {
-        obj1 = new MovingObject(frameWidth / 2 - 60, frameHeight / 2 - 30, Color.red);
+        obj1 = new MovingObject(frameWidth / 2, frameHeight / 2, Color.red);
     }
 
     public void paintComponent(Graphics g)
@@ -23,7 +23,12 @@ public class MovingObjectComponent extends JComponent
     }
 
     public void moveBy(double dx, double dy) {
-        obj1.moveTo(obj1.getX() + dx, obj1.getY() + dy);
+        double newX = obj1.getX() + dx;
+        double newY = obj1.getY() + dy;
+        if(newX <= getWidth() - 25 && newX >= 25) 
+            obj1.moveBy(dx, 0);
+        if(newY <= getHeight() - 25 && newY >= 25) 
+            obj1.moveBy(0, dy);
         repaint();
     }
 }
