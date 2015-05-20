@@ -4,7 +4,7 @@ import java.awt.Color;
 
 
 /**
-An object shape that can be positioned anywhere on the screen.
+A car shape that can be positioned anywhere on the screen.
  */
 public class MovingObject 
 {
@@ -30,7 +30,7 @@ public class MovingObject
      */
     public void draw(Graphics2D g2)
     {
-        Ellipse2D.Double circle = new Ellipse2D.Double(xLeft, yTop, 50, 50);
+        Ellipse2D.Double circle = new Ellipse2D.Double(xLeft - 25, yTop - 25, 50, 50);
         
         g2.draw(circle);
 
@@ -41,6 +41,11 @@ public class MovingObject
     public void moveTo(double x, double y) {
         xLeft = x;
         yTop = y;
+    }
+    
+    public void moveBy(double dx, double dy) {
+        xLeft += dx;
+        yTop += dy;
     }
     
     public double getX() {
