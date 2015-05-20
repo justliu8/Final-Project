@@ -28,18 +28,18 @@ public class MovingObjectViewer
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
-                if (left && up)
-                    component.moveBy(-diagonalMoveDistance, -diagonalMoveDistance);
-                else if (left && down)
-                    component.moveBy(-diagonalMoveDistance, diagonalMoveDistance);
-                else if (right && up)
+                if (right && up)
                     component.moveBy(diagonalMoveDistance, -diagonalMoveDistance);
                 else if (right && down)
                     component.moveBy(diagonalMoveDistance, diagonalMoveDistance);
-                else if (left)
-                    component.moveBy(-5, 0);
+                else if (left && up)
+                    component.moveBy(-diagonalMoveDistance, -diagonalMoveDistance);
+                else if (left && down)
+                    component.moveBy(-diagonalMoveDistance, diagonalMoveDistance);
                 else if (right)
                     component.moveBy(5, 0);
+                else if (left)
+                    component.moveBy(-5, 0);
                 else if (up)
                     component.moveBy(0, -5);
                 else if (down)
@@ -50,14 +50,19 @@ public class MovingObjectViewer
         class MotionWithKeyListener implements KeyListener {
             public void keyPressed(KeyEvent e)
             {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     left = true;
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    right = false;
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     right = true;
-                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                    up = false;
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                     up = true;
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    down = false;
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     down = true;
+                    up = false;
+                }
             }
 
             public void keyReleased(KeyEvent e) {
