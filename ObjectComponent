@@ -1,0 +1,153 @@
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Font;
+
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+/**
+ * Draws the user.
+ *
+ * @author (Thanatcha Panpairoj)
+ * @version (5/19/15)
+ */
+public class ObjectComponent extends JComponent 
+{
+    private UserObject user;
+    private GridObject grid;
+    private boolean left, right, up, down, firing;
+    private int fWidth, fHeight, framesToDisplayInstructions;
+    private int shotCounter = 0;
+    private double mouseX, mouseY;
+
+    private ArrayList<ProjectileObject> projectiles;
+
+    /**
+     * Initializes user object component. Sets the time to display the control instructions to 3.5 seconds(210 frames)
+     *
+     * @param frameWidth   the width of the frame.
+     * @param frameHeight  the height of the frame.
+     *
+     */
+    public ObjectComponent(int frameWidth, int frameHeight) {
+        user = new UserObject(frameWidth / 2, frameHeight / 2, Color.RED);
+
+        grid = new GridObject(frameWidth, frameHeight);
+
+        fWidth = frameWidth;
+        fHeight = frameHeight;
+
+        framesToDisplayInstructions = 210;
+
+        projectiles = new ArrayList<ProjectileObject>();
+    }
+
+    /**
+     * Draws the user component.
+     *
+     * @param g   Graphics
+     * @return void
+     */
+    public void paintComponent(Graphics g)
+    {
+        Graphics2D g2 = (Graphics2D) g;
+
+        grid.draw(g2, fWidth, fHeight);
+        for(ProjectileObject projectile : projectiles) {
+            projectile.draw(g2);
+            projectile.move();
+        }
+        user.draw(g2);
+
+        paintArrowKeys(g2);
+
+        if(framesToDisplayInstructions > 0) {
+            g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
+            int colorNum = 210 - framesToDisplayInstructions;
+            g2.setColor(new Color(colorNum, colorNum, colorNum));
+            g2.drawString("WASD to move, hold mouse to shoot", fWidth / 2 - 205, fHeight / 2 - 70);
+            framesToDisplayInstructions--;
+        }
+    }
+
+    /**
+     * Moves user object by an amount. Prevents going off screen.
+     *
+     * @param dx change in x
+     * @param dy change in y
+     * @return void
+     */
+    public void moveBy(double dx, double dy) {
+        double newX = user.getX() + dx;
+        double newY = user.getY() + dy;
+        if(newX <= getWidth() - 25 && newX >= 25) 
+            user.moveBy(dx, 0);
+        if(newY <= getHeight() - 25 && newY >= 25) 
+            user.moveBy(0, dy);
+    }
+
+    /**
+     * For testing movement keys. Updates which keys are pressed.
+     *
+     * @param left left arrow key
+     * @param right right arrow key
+     * @param up up arrow key
+     * @param down down arrow key
+     * @return void
+     */
+    public void updateKeys(boolean left, boolean right, boolean up, boolean down, boolean firing) {
+        this.left = left;
+        this.right = right;
+        this.up = up;
+        this.down = down;
+        this.firing = firing;
+    }
+
+    /**
+     * For testing movement.
+     * Displays which keys are pressed
+     * @param g2 Graphics context
+     * @return void
+     */
+    public void paintArrowKeys(Graphics g2) {
+        g2.setColor(Color.BLACK);
+        g2.drawString("Left: " + left, 125, 150);
+        g2.drawString("Right: " + right, 125, 250);
+        g2.drawString("Up: " + up, 125, 350);
+        g2.drawString("Down: " + down, 125, 450);
+        g2.drawString("Firing: " + firing, 125, 550);
+        g2.drawString("MouseX: " + mouseX, 210, 150);
+        g2.drawString("MouseY: " + mouseY, 210, 250);
+    }
+
+    /**
+     * Updates the know size of the frame
+     * 
+     * @param frameWidth    width of the frame
+     * @param frameHeight   height of the frame
+     * @return void
+     */
+    public void updateSize(int frameWidth, int frameHeight) {
+        fWidth = frameWidth;
+        fHeight = frameHeight;
+    }
+
+    /**
+     * Shoots projectiles and adjusts the fire rate.
+     * 
+     * @param mouseX    the x-coordinate of the mouse
+     * @param mouseY    the y-coordinate of the mouse
+     * @param frameDelay    shoots a projectile every frameDelay frames
+     * @return void
+     */
+    public void shoot(double mouseX, double mouseY, int frameDelay) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+        shotCounter++;
+        shotCounter %= frameDelay;
+        if(shotCounter == 0)
+            projectiles.add(new ProjectileObject(fWidth, fHeight, user.getX(), user.getY(), mouseX, mouseY, 15));
+    }
+}
