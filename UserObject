@@ -2,9 +2,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.Color;
 
-
 /**
-A car shape that can be positioned anywhere on the screen.
+ * Describes user object.
+ *
+ * @author (Thanatcha Panpairoj)
+ * @version (5/19/15)
  */
 public class UserObject 
 {
@@ -13,9 +15,9 @@ public class UserObject
     private Color color;
 
     /**
-    Constructs an object with a given top left corner.
-    @param x the x coordinate of the top left corner
-    @param y the y coordinate of the top left corner
+    Constructs an user object with a given center.
+    @param x the x coordinate of the center
+    @param y the y coordinate of the center
      */
     public UserObject(int x, int y, Color color)
     {
@@ -34,24 +36,48 @@ public class UserObject
         //could be any object, doesn't have to be an ellipse
         g2.draw(circle);
 
-        g2.setPaint(Color.black);
+        g2.setPaint(color);
         g2.fill(circle);
     }
 
+    /**
+     * Moves user object to (x,y)
+     *
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @return void
+     */
     public void moveTo(double x, double y) {
         xLeft = x;
         yTop = y;
     }
-    
+
+    /**
+     * Moves user object by an amount.
+     *
+     * @param dx change in x
+     * @param dy change in y
+     * @return void
+     */
     public void moveBy(double dx, double dy) {
         xLeft += dx;
         yTop += dy;
     }
-    
+
+    /**
+     * Returns x-coordinate of user object.
+     *
+     * @return xLeft
+     */
     public double getX() {
         return xLeft;
     }
-    
+
+    /**
+     * Returns y-coordinate of user object.
+     *
+     * @return yTop
+     */
     public double getY() {
         return yTop;
     }
