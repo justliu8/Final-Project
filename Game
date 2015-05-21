@@ -2,100 +2,150 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import java.awt.Toolkit;
+import java.awt.Cursor;
+import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import java.awt.geom.Ellipse2D;
 
+/**
+ * This is the game class.
+ *
+ * @author (Thanatcha Panpairoj)
+ * @version (5/20/15)
+ */
+
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false;
-    private static final double diagonalMoveDistance = 5 / Math.sqrt(2);
-    
+    private static boolean left = false, right = false, up = false, down = false, firing = false;
+    private static double diagonalMoveDistance = 5 / Math.sqrt(2), mouseX, mouseY;
+
+    /**
+     * Main method that starts the game.
+     *
+     * @param None
+     * @return void
+     */
     public static void main(String[] args)
     {
         JFrame frame = new JFrame();
 
-        frame.setSize(1000, 700);
+        frame.setSize((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
         frame.setTitle("Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
 
         //         frame.setUndecorated(true);
         //         frame.setShape(new Ellipse2D.Double(0,0, 800, 800));//circle frame?
-        
-        GridComponent grid = new GridComponent(frame.getWidth(), frame.getHeight());
-        JPanel panel = new JPanel();
-        panel.add(grid);
-        panel.setVisible(true);
-        frame.add(panel);
 
-        UserObjectComponent userComponent = new UserObjectComponent(frame.getWidth(), frame.getHeight());
-        frame.add(userComponent);
-        userComponent.setFocusable(true);
+        ObjectComponent component = new ObjectComponent(frame.getWidth(), frame.getHeight());
+        frame.add(component, BorderLayout.CENTER);
+        component.setFocusable(true);
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
+                mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX();
+                mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
+
                 if (right && up && !left)
-                    userComponent.moveBy(diagonalMoveDistance, -diagonalMoveDistance);
+                    component.moveBy(diagonalMoveDistance, -diagonalMoveDistance);
                 else if (right && down && !left)
-                    userComponent.moveBy(diagonalMoveDistance, diagonalMoveDistance);
+                    component.moveBy(diagonalMoveDistance, diagonalMoveDistance);
                 else if (left && up && !right)
-                    userComponent.moveBy(-diagonalMoveDistance, -diagonalMoveDistance);
+                    component.moveBy(-diagonalMoveDistance, -diagonalMoveDistance);
                 else if (left && down && !right)
-                    userComponent.moveBy(-diagonalMoveDistance, diagonalMoveDistance);
+                    component.moveBy(-diagonalMoveDistance, diagonalMoveDistance);
                 else {
                     if (right)
-                        userComponent.moveBy(5, 0);
+                        component.moveBy(5, 0);
                     if (left)
-                        userComponent.moveBy(-5, 0);
+                        component.moveBy(-5, 0);
                     if (up)
-                        userComponent.moveBy(0, -5);
+                        component.moveBy(0, -5);
                     if (down)
-                        userComponent.moveBy(0, 5);
+                        component.moveBy(0, 5);
                 }
-                userComponent.updateArrowKeys(left, right, up, down);
+
+                if(firing)
+                    component.shoot(mouseX, mouseY, 10);
+
+                component.updateKeys(left, right, up, down, firing);
+                component.updateSize(frame.getWidth(), frame.getHeight());
+                component.repaint();
             }
         }
 
         class MotionWithKeyListener implements KeyListener {
             public void keyPressed(KeyEvent e)
             {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                if (e.getKeyCode() == KeyEvent.VK_A)
                     left = true;
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                else if (e.getKeyCode() == KeyEvent.VK_D)
                     right = true;
-                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                else if (e.getKeyCode() == KeyEvent.VK_W)
                     up = true; 
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                else if (e.getKeyCode() == KeyEvent.VK_S)
                     down = true;
             }
 
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                if (e.getKeyCode() == KeyEvent.VK_A)
                     left = false;
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                else if (e.getKeyCode() == KeyEvent.VK_D)
                     right = false;
-                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                else if (e.getKeyCode() == KeyEvent.VK_W)
                     up = false;
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                else if (e.getKeyCode() == KeyEvent.VK_S)
                     down = false;
             }
 
             public void keyTyped(KeyEvent e) {}
         }
 
-        ActionListener listener = new TimeListener();
+        class MousePressListener implements MouseListener
+        {
+            public void mousePressed(MouseEvent event)
+            {
+                firing = true;
+            }
 
-        KeyListener keyListener = new MotionWithKeyListener();
-        userComponent.addKeyListener(keyListener);
+            public void mouseReleased(MouseEvent event) {
+                firing = false;
+            }
+
+            public void mouseClicked(MouseEvent event) {
+                component.shoot(mouseX, mouseY, 10);
+            }
+
+            public void mouseEntered(MouseEvent event) {}
+
+            public void mouseExited(MouseEvent event) {}
+        }
+
+        frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+
+        ActionListener tListener = new TimeListener();
+
+        KeyListener kListener = new MotionWithKeyListener();
+        component.addKeyListener(kListener);
+
+        MouseListener mListener = new MousePressListener();
+        component.addMouseListener(mListener);
 
         final int DELAY = 1000 / 60;//60 frames per second
-        Timer t = new Timer(DELAY, listener);
+        Timer t = new Timer(DELAY, tListener);
         t.start();
+
+        //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        frame.setVisible(true);
+        frame.setResizable(false);
     }
 }
