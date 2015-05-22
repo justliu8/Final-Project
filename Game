@@ -38,20 +38,20 @@ public class Game
      */
     public static void main(String[] args)
     {
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
 
         frame.setSize((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
         frame.setTitle("Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         
-        int width = frame.getWidth();
-        int height = frame.getHeight();
+        final int width = frame.getWidth();
+        final int height = frame.getHeight();
 
         //         frame.setUndecorated(true);
         //         frame.setShape(new Ellipse2D.Double(0,0, 800, 800));//circle frame?
 
-        ObjectsComponent component = new ObjectsComponent(width, frame.getHeight());
+        final ObjectsComponent component = new ObjectsComponent(width, frame.getHeight());
         frame.add(component, BorderLayout.CENTER);
         component.setFocusable(true);
 
