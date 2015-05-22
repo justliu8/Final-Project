@@ -74,14 +74,17 @@ public class ObjectsComponent extends JComponent
             difficulty += 100000;
         else if(difficulty < 2147400000)
             difficulty += 50000;
+            
         Graphics2D g2 = (Graphics2D) g;
 
         grid.draw(g2, fWidth, fHeight);
+        
         for(int e = 0; e < enemies.size(); e++) {
             EnemyObject enemy = enemies.get(e);
             enemy.draw(g2);
             enemyShoot(e, enemy.getX(), enemy.getY(), 60);
         }
+        
         for(int p = 0; p < userProjectiles.size(); p++) {
             ProjectileObject projectile = userProjectiles.get(p);
             double x = projectile.getX();
@@ -105,6 +108,7 @@ public class ObjectsComponent extends JComponent
                 p--;
             }
         }
+        
         for(int p = 0; p < enemyProjectiles.size(); p++) {
             ProjectileObject projectile = enemyProjectiles.get(p);
             double x = projectile.getX();
@@ -115,6 +119,7 @@ public class ObjectsComponent extends JComponent
             } else
                 enemyProjectiles.remove(p);
         }
+        
         user.draw(g2);
 
         paintStats(g2);
