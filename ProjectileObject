@@ -10,23 +10,22 @@ import java.awt.Color;
  */
 public class ProjectileObject
 {
-    private int fWidth, fHeight;
-    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed;
-    private boolean existing;
+    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle;
     private Ellipse2D projectile;
+    private Color color;
 
     /**
-     *Constructs an projectile object with a given starting point and ending point. 
+     *Constructs a projectile object with a given starting point and ending point. 
      *Calculates the angle and sets the vertical and horizontal speed of the projectile
+     *
      *@param startingX the x coordinate of the center of the user
      *@param startingY the y coordinate of the center of the user
      *@param startingX the x coordinate of the mouse
      *@param startingY the y coordinate of the mouse
      *@param pixelsPerSecond the speed of the projectile
      */
-    public ProjectileObject(int frameWidth, int frameHeight, double startingX, double startingY, double endingX, double endingY, double pixelsPerSecond) {
-        fWidth = frameWidth;
-        fHeight = frameHeight;
+    public ProjectileObject(Color color, double startingX, double startingY, double endingX, double endingY, double pixelsPerSecond) {
+        this.color = color;
 
         currentX = startingX;
         currentY = startingY;
@@ -34,10 +33,7 @@ public class ProjectileObject
         finalX = endingX;
         finalY = endingY;
 
-        existing = true;
-     
-
-        double angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
+        angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
         if(finalX > currentX)
             xSpeed = Math.cos(angle) * pixelsPerSecond;
         else
@@ -48,20 +44,38 @@ public class ProjectileObject
             ySpeed = -Math.sin(angle) * pixelsPerSecond;
     }
 
+    /**
+     *Draws a projectile object. 
+     *Checks if the projectile is within the frame by comparing current coordinates to fWidth and fHeight.
+     *If it isn't set existing to false so it will not be moved by the move() method
+     *
+     *@param g2 the Graphics2D
+     *@return void
+     */
     public void draw(Graphics2D g2) {
-        if(existing && currentX > 0 && currentX < fWidth && currentY > 0 && currentY < fHeight) {
-            projectile = new Ellipse2D.Double(currentX - 10, currentY - 10, 20, 20);
-            g2.setPaint(Color.GREEN);
-            g2.fill(projectile);
-            g2.draw(projectile);
-        } else 
-            existing = false;
+        projectile = new Ellipse2D.Double(currentX - 10, currentY - 10, 20, 20);
+        g2.setPaint(color);
+        g2.fill(projectile);
+        g2.draw(projectile);
     }
 
+    /**
+     *Moves a projectile object along its path. 
+     *Checks if the projectile is within the frame checking the existing boolean.
+     *
+     *@param g2 the Graphics2D
+     *@return void
+     */
     public void move() {
-        if(existing) {
             currentX += xSpeed;
             currentY += ySpeed;
-        }
+    }
+
+    public double getX() {
+        return currentX;
+    }
+
+    public double getY() {
+        return currentY;
     }
 }
