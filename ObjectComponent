@@ -7,67 +7,128 @@ import java.util.ArrayList;
 
 import javax.swing.JComponent;
 
+import java.text.DecimalFormat;
+
 /**
  * Draws the user.
  *
  * @author (Thanatcha Panpairoj)
  * @version (5/19/15)
  */
-public class ObjectComponent extends JComponent 
+public class ObjectsComponent extends JComponent 
 {
     private UserObject user;
     private GridObject grid;
+
     private boolean left, right, up, down, firing;
-    private int fWidth, fHeight, framesToDisplayInstructions;
-    private int shotCounter = 0;
+    private int fWidth, fHeight, framesToDisplayInstructions, shotClock = 0, enemyClock = 0, score, difficulty;
     private double mouseX, mouseY;
 
-    private ArrayList<ProjectileObject> projectiles;
+    private ArrayList<ProjectileObject> userProjectiles;
+    private ArrayList<ProjectileObject> enemyProjectiles;
+    private ArrayList<EnemyObject> enemies;
+    private ArrayList<Integer> enemyShotClock;
 
     /**
-     * Initializes user object component. Sets the time to display the control instructions to 3.5 seconds(210 frames)
-     *
+     * Initializes user object component. Sets the time to display the control instructions to 5 seconds(210 frames)
+     * Sets up a grid background and creates other game objects.
+     * 
      * @param frameWidth   the width of the frame.
      * @param frameHeight  the height of the frame.
      *
      */
-    public ObjectComponent(int frameWidth, int frameHeight) {
-        user = new UserObject(frameWidth / 2, frameHeight / 2, Color.RED);
+    public ObjectsComponent(int frameWidth, int frameHeight) {
+        user = new UserObject(frameWidth / 2, frameHeight / 2, Color.BLUE);
+        score = 0;
 
         grid = new GridObject(frameWidth, frameHeight);
 
         fWidth = frameWidth;
         fHeight = frameHeight;
 
-        framesToDisplayInstructions = 210;
+        framesToDisplayInstructions = 300;
 
-        projectiles = new ArrayList<ProjectileObject>();
+        //difficulty = 2147400000;
+        difficulty = 0;
+
+        userProjectiles = new ArrayList<ProjectileObject>();
+        enemyProjectiles = new ArrayList<ProjectileObject>();
+        enemies = new ArrayList<EnemyObject>();
+        enemyShotClock = new ArrayList<Integer>();
     }
 
     /**
-     * Draws the user component.
+     * Draws all the object component. Including the user, projectiles, and enemies. This paintComponent
+     * method gets called every 1000 / 60 millisecond so it updates 60 times per 1000 millisecond.
      *
-     * @param g   Graphics
+     * @param g Graphics
      * @return void
      */
     public void paintComponent(Graphics g)
     {
+        if(difficulty < 1000000000)
+            difficulty += 200000;
+        else if(difficulty < 1500000000)
+            difficulty += 150000;
+        else if(difficulty < 1750000000)
+            difficulty += 100000;
+        else if(difficulty < 2147400000)
+            difficulty += 50000;
         Graphics2D g2 = (Graphics2D) g;
 
         grid.draw(g2, fWidth, fHeight);
-        for(ProjectileObject projectile : projectiles) {
-            projectile.draw(g2);
-            projectile.move();
+        for(int e = 0; e < enemies.size(); e++) {
+            EnemyObject enemy = enemies.get(e);
+            enemy.draw(g2);
+            enemyShoot(e, enemy.getX(), enemy.getY(), 60);
+        }
+        for(int p = 0; p < userProjectiles.size(); p++) {
+            ProjectileObject projectile = userProjectiles.get(p);
+            double x = projectile.getX();
+            double y = projectile.getY();
+            if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
+                projectile.draw(g2);
+                projectile.move();
+                for(int e = 0; e < enemies.size(); e++) {
+                    EnemyObject enemy = enemies.get(e);
+                    if(Math.pow(enemy.getX() - x, 2) + Math.pow(enemy.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
+                        enemies.remove(e);
+                        enemyShotClock.remove(e);
+                        e--;
+                        userProjectiles.remove(p);
+                        p--;
+                        updateScore(10 + (difficulty / 10000000));
+                    }
+                }
+            } else {
+                userProjectiles.remove(p);
+                p--;
+            }
+        }
+        for(int p = 0; p < enemyProjectiles.size(); p++) {
+            ProjectileObject projectile = enemyProjectiles.get(p);
+            double x = projectile.getX();
+            double y = projectile.getY();
+            if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
+                projectile.draw(g2);
+                projectile.move();
+            } else
+                enemyProjectiles.remove(p);
         }
         user.draw(g2);
 
-        paintArrowKeys(g2);
+        paintStats(g2);
+
+        g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
+        g2.drawString("SCORE: " + score, 30, fHeight - 50);
 
         if(framesToDisplayInstructions > 0) {
-            g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
-            int colorNum = 210 - framesToDisplayInstructions;
-            g2.setColor(new Color(colorNum, colorNum, colorNum));
+            if(framesToDisplayInstructions <= 210) {
+                int colorNum = 210 - framesToDisplayInstructions;
+                g2.setColor(new Color(colorNum, colorNum, colorNum));
+            }
             g2.drawString("WASD to move, hold mouse to shoot", fWidth / 2 - 205, fHeight / 2 - 70);
+            g2.drawString("SPACEBAR for quadruple speed", fWidth / 2 - 185, fHeight / 2 + 70);
             framesToDisplayInstructions--;
         }
     }
@@ -89,12 +150,24 @@ public class ObjectComponent extends JComponent
     }
 
     /**
+     * Updates the known location of the mouse. Used to test shooting.
+     * 
+     * @param mouseX the x coordinate of the mouse
+     * @param mouseY the y coordinate of the mouse
+     * @return void
+     */
+    public void updateMouse(double mouseX, double mouseY) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+    }
+
+    /**
      * For testing movement keys. Updates which keys are pressed.
      *
-     * @param left left arrow key
-     * @param right right arrow key
-     * @param up up arrow key
-     * @param down down arrow key
+     * @param left boolean indicating if the left arrow key is pressed
+     * @param right boolean indicating if the right arrow key is pressed
+     * @param up boolean indicating if the up arrow key is pressed
+     * @param down boolean indicating if the down arrow key is pressed
      * @return void
      */
     public void updateKeys(boolean left, boolean right, boolean up, boolean down, boolean firing) {
@@ -106,24 +179,7 @@ public class ObjectComponent extends JComponent
     }
 
     /**
-     * For testing movement.
-     * Displays which keys are pressed
-     * @param g2 Graphics context
-     * @return void
-     */
-    public void paintArrowKeys(Graphics g2) {
-        g2.setColor(Color.BLACK);
-        g2.drawString("Left: " + left, 125, 150);
-        g2.drawString("Right: " + right, 125, 250);
-        g2.drawString("Up: " + up, 125, 350);
-        g2.drawString("Down: " + down, 125, 450);
-        g2.drawString("Firing: " + firing, 125, 550);
-        g2.drawString("MouseX: " + mouseX, 210, 150);
-        g2.drawString("MouseY: " + mouseY, 210, 250);
-    }
-
-    /**
-     * Updates the know size of the frame
+     * Updates the known size of the frame.
      * 
      * @param frameWidth    width of the frame
      * @param frameHeight   height of the frame
@@ -135,6 +191,37 @@ public class ObjectComponent extends JComponent
     }
 
     /**
+     * Updates the player's socre.
+     * 
+     * @param dScore the change in score
+     * @return void
+     */
+    public void updateScore(int dScore) {
+        score += dScore;
+    }
+
+    /**
+     * For testing movement and shooting. Displays which keys are pressed and the mouse coordinates.
+     * Also displays game info.
+     * @param g2 Graphics context
+     * @return void
+     */
+    public void paintStats(Graphics g2) {
+        g2.setColor(Color.BLACK);
+        g2.drawString("Left: " + left, 125, 150);
+        g2.drawString("Right: " + right, 125, 250);
+        g2.drawString("Up: " + up, 125, 350);
+        g2.drawString("Down: " + down, 125, 450);
+        g2.drawString("Firing: " + firing, 125, 550);
+        g2.drawString("MouseX: " + mouseX, 210, 150);
+        g2.drawString("MouseY: " + mouseY, 210, 250);
+
+        DecimalFormat df = new DecimalFormat("0,000,000,000");
+
+        g2.drawString("Difficulty: " + df.format(difficulty) + "/ 2,147,400,000", 210, 350);
+    }
+
+    /**
      * Shoots projectiles and adjusts the fire rate.
      * 
      * @param mouseX    the x-coordinate of the mouse
@@ -142,12 +229,45 @@ public class ObjectComponent extends JComponent
      * @param frameDelay    shoots a projectile every frameDelay frames
      * @return void
      */
-    public void shoot(double mouseX, double mouseY, int frameDelay) {
+    public void userShoot(double mouseX, double mouseY, int frameDelay) {
+        //frameDelay = 1;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
-        shotCounter++;
-        shotCounter %= frameDelay;
-        if(shotCounter == 0)
-            projectiles.add(new ProjectileObject(fWidth, fHeight, user.getX(), user.getY(), mouseX, mouseY, 15));
+        shotClock++;
+        shotClock %= frameDelay;
+        if(shotClock == 0)
+            userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15));
+    }
+
+    public void enemyShoot(int enemyIndex, double enemyX, double enemyY, int frameDelay) {
+        int i = (enemyShotClock.get(enemyIndex) + 1) % (frameDelay - (difficulty / 40000000));
+        enemyShotClock.set(enemyIndex, new Integer(i));
+
+        if(i == 0)
+            enemyProjectiles.add(new ProjectileObject(Color.RED, enemyX, enemyY, user.getX(), user.getY(), 10));
+    }
+
+    public void spawnEnemy(int maxEnemies, int frameDelay) {
+        //frameDelay =- difficulty / 10000000;
+        maxEnemies += difficulty / 300000000;
+        enemyClock++;
+        enemyClock %= (frameDelay - (difficulty / 10000000));
+        if(enemyClock == 0 && enemies.size() < maxEnemies) {
+            int x = 0;
+            int y = 0;
+            int ranNum = (int)(Math.random() * 4) + 1;//random number 1-4
+            if(ranNum == 1)//spawns north
+                x = (int)(Math.random() * fWidth);
+            else if(ranNum == 2) {//spawns south
+                x = (int)(Math.random() * fWidth);
+                y = fHeight - 30;
+            } else if(ranNum == 3) {//spawns east
+                y = (int)(Math.random() * fHeight);
+                x = fWidth;
+            } else// spawns west
+                y = (int)(Math.random() * fHeight);
+            enemies.add(new EnemyObject(x, y, Color.BLACK));
+            enemyShotClock.add(0);
+        }
     }
 }
