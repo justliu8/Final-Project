@@ -25,8 +25,8 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false;
-    private static double diagonalMoveDistance = 5 / Math.sqrt(2), mouseX, mouseY;
+    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false;
+    private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
      * Main method that starts the game. Sets up the FJrame, ObjectsComponent, KeyListener.
@@ -44,7 +44,7 @@ public class Game
         frame.setTitle("Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        
+
         final int width = frame.getWidth();
         final int height = frame.getHeight();
 
@@ -74,21 +74,21 @@ public class Game
                     component.moveBy(-diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
                 else {
                     if (right)
-                        component.moveBy(5 * speedUp, 0);
+                        component.moveBy(7 * speedUp, 0);
                     if (left)
-                        component.moveBy(-5 * speedUp, 0);
+                        component.moveBy(-7 * speedUp, 0);
                     if (up)
-                        component.moveBy(0, -5 * speedUp);
+                        component.moveBy(0, -7 * speedUp);
                     if (down)
-                        component.moveBy(0, 5 * speedUp);
+                        component.moveBy(0, 7 * speedUp);
                 }
 
-                if(firing)
+                if(firing || autofire)
                     component.userShoot(mouseX, mouseY, 10);
 
-                component.spawnEnemy(5, 240);
-                    
-                component.updateKeys(left, right, up, down, firing);
+                component.spawnEnemy(3, 5, 240);
+
+                component.updateKeys(left, right, up, down, firing, autofire);
                 component.updateSize(width, frame.getHeight());
                 component.updateMouse(mouseX, mouseY);
                 component.repaint();
@@ -123,7 +123,13 @@ public class Game
                     space = false;
             }
 
-            public void keyTyped(KeyEvent e) {}
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if ((c == 'f' || c == 'F') && !autofire)
+                    autofire = true;
+                else if((c == 'f' || c == 'F') && autofire)
+                    autofire = false;
+            }
         }
 
         class MousePressListener implements MouseListener
