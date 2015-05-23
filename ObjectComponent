@@ -2,6 +2,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Rectangle;
 
 import java.util.ArrayList;
 
@@ -20,17 +21,18 @@ public class ObjectsComponent extends JComponent
     private UserObject user;
     private GridObject grid;
 
-    private boolean left, right, up, down, firing;
+    private boolean left, right, up, down, firing, autofire;
     private int fWidth, fHeight, framesToDisplayInstructions, shotClock = 0, enemyClock = 0, score, difficulty;
-    private double mouseX, mouseY;
+    private double mouseX, mouseY, time = 0;
 
     private ArrayList<ProjectileObject> userProjectiles;
     private ArrayList<ProjectileObject> enemyProjectiles;
     private ArrayList<EnemyObject> enemies;
+    private ArrayList<Boss> bosses;
     private ArrayList<Integer> enemyShotClock;
 
     /**
-     * Initializes user object component. Sets the time to display the control instructions to 5 seconds(210 frames)
+     * Initializes user object component. Sets the time to display the control instructions to 10 seconds(600 frames)
      * Sets up a grid background and creates other game objects.
      * 
      * @param frameWidth   the width of the frame.
@@ -38,7 +40,7 @@ public class ObjectsComponent extends JComponent
      *
      */
     public ObjectsComponent(int frameWidth, int frameHeight) {
-        user = new UserObject(frameWidth / 2, frameHeight / 2, Color.BLUE);
+        user = new UserObject(25, frameWidth / 2, frameHeight / 2, Color.BLUE);
         score = 0;
 
         grid = new GridObject(frameWidth, frameHeight);
@@ -46,14 +48,16 @@ public class ObjectsComponent extends JComponent
         fWidth = frameWidth;
         fHeight = frameHeight;
 
-        framesToDisplayInstructions = 300;
+        framesToDisplayInstructions = 600;
 
-        //difficulty = 2147400000;
-        difficulty = 0;
+        difficulty = 2147400000;
+        //difficulty = 1000000000;
+        //difficulty = 0;
 
         userProjectiles = new ArrayList<ProjectileObject>();
         enemyProjectiles = new ArrayList<ProjectileObject>();
         enemies = new ArrayList<EnemyObject>();
+        bosses = new ArrayList<Boss>();
         enemyShotClock = new ArrayList<Integer>();
     }
 
@@ -66,75 +70,117 @@ public class ObjectsComponent extends JComponent
      */
     public void paintComponent(Graphics g)
     {
-        if(difficulty < 1000000000)
-            difficulty += 200000;
-        else if(difficulty < 1500000000)
-            difficulty += 150000;
-        else if(difficulty < 1750000000)
-            difficulty += 100000;
-        else if(difficulty < 2147400000)
-            difficulty += 50000;
-            
-        Graphics2D g2 = (Graphics2D) g;
+        try{
+            time += 1.0 / 60;
+            if(difficulty < 1000000000)
+                difficulty += 200000;
+            else if(difficulty < 1500000000)
+                difficulty += 150000;
+            else if(difficulty < 1750000000)
+                difficulty += 100000;
+            else if(difficulty < 2147400000)
+                difficulty += 50000;
 
-        grid.draw(g2, fWidth, fHeight);
-        
-        for(int e = 0; e < enemies.size(); e++) {
-            EnemyObject enemy = enemies.get(e);
-            enemy.draw(g2);
-            enemyShoot(e, enemy.getX(), enemy.getY(), 60);
-        }
-        
-        for(int p = 0; p < userProjectiles.size(); p++) {
-            ProjectileObject projectile = userProjectiles.get(p);
-            double x = projectile.getX();
-            double y = projectile.getY();
-            if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
-                projectile.draw(g2);
-                projectile.move();
-                for(int e = 0; e < enemies.size(); e++) {
-                    EnemyObject enemy = enemies.get(e);
-                    if(Math.pow(enemy.getX() - x, 2) + Math.pow(enemy.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
-                        enemies.remove(e);
-                        enemyShotClock.remove(e);
-                        e--;
-                        userProjectiles.remove(p);
-                        p--;
-                        updateScore(10 + (difficulty / 10000000));
+            Graphics2D g2 = (Graphics2D) g;
+
+            grid.draw(g2, fWidth, fHeight);
+
+            for(int e = 0; e < enemies.size(); e++) {
+                EnemyObject enemy = enemies.get(e);
+                enemy.draw(g2);
+                enemyShoot(e, enemy.getX(), enemy.getY(), 60);
+                enemy.move();
+            }
+
+            for(int b = 0; b < bosses.size(); b++) {
+                Boss boss = bosses.get(b);
+                boss.draw(g2);
+                boss.move();
+            }
+
+            for(int p = 0; p < userProjectiles.size(); p++) {
+                ProjectileObject projectile = userProjectiles.get(p);
+                double x = projectile.getX();
+                double y = projectile.getY();
+
+                if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
+                    for(int b = 0; b < bosses.size(); b++) {
+                        Boss boss = bosses.get(b);
+                        if(Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
+                            boss.changeHp(-1);
+                            userProjectiles.remove(p--);
+                            if(boss.getHp() == 0) {
+                                bosses.remove(b--);
+                                updateScore(10 + 20 * (difficulty / 10000000));
+                                break;
+                            }
+                        }
                     }
+
+                    if(projectile != null) {
+                        for(int e = 0; e < enemies.size(); e++) {
+                            EnemyObject enemy = enemies.get(e);
+                            if(Math.pow(enemy.getX() - x, 2) + Math.pow(enemy.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
+                                enemies.remove(e);
+                                enemyShotClock.remove(e--);
+                                userProjectiles.remove(p--);
+                                updateScore(10 + (difficulty / 10000000));
+                                break;
+                            }
+                        }
+                    }
+                    projectile.draw(g2);
+                    projectile.move();
+                } else
+                    userProjectiles.remove(p--);
+            }
+
+            for(int p = 0; p < enemyProjectiles.size(); p++) {
+                ProjectileObject projectile = enemyProjectiles.get(p);
+                double x = projectile.getX();
+                double y = projectile.getY();
+
+                if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
+                    projectile.draw(g2);
+                    projectile.move();
+                    projectile.draw(g2);
+                    projectile.move();
+                    if(Math.pow(user.getX() - x, 2) + Math.pow(user.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
+                        user.changeHp(-1);
+                        enemyProjectiles.remove(p--);
+                    }
+                } else 
+                    enemyProjectiles.remove(p--);
+            }
+
+            user.draw(g2);
+
+            paintStats(g2);
+
+            Rectangle hpBar = new Rectangle(25, 15, (int)(500 * (((double)user.getHp()) / user.getMaxHp())), 30);
+            g2.setPaint(new Color(210, 0, 0));
+            g2.fill(hpBar);
+            g2.draw(hpBar);
+
+            g2.setPaint(Color.BLACK);
+            g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
+            g2.drawString("SCORE: " + score, 30, fHeight - 50);
+            g2.drawString("HP: " + user.getHp() + " / " + user.getMaxHp(), 30, 40);
+            
+            DecimalFormat df = new DecimalFormat("00");
+            g2.drawString(df.format((int)time / 60) + ":" + df.format((int)time), fWidth - 100, fHeight - 50);
+
+            if(framesToDisplayInstructions > 0) {
+                if(framesToDisplayInstructions <= 210) {
+                    int colorNum = 210 - framesToDisplayInstructions;
+                    g2.setColor(new Color(colorNum, colorNum, colorNum));
                 }
-            } else {
-                userProjectiles.remove(p);
-                p--;
+                g2.drawString("WASD to move, F or hold mouse to shoot", fWidth / 2 - 225, fHeight / 2 - 70);
+                g2.drawString("SPACEBAR for quadruple speed", fWidth / 2 - 185, fHeight / 2 + 70);
+                framesToDisplayInstructions--;
             }
-        }
-        
-        for(int p = 0; p < enemyProjectiles.size(); p++) {
-            ProjectileObject projectile = enemyProjectiles.get(p);
-            double x = projectile.getX();
-            double y = projectile.getY();
-            if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
-                projectile.draw(g2);
-                projectile.move();
-            } else
-                enemyProjectiles.remove(p);
-        }
-        
-        user.draw(g2);
+        } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
-        paintStats(g2);
-
-        g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
-        g2.drawString("SCORE: " + score, 30, fHeight - 50);
-
-        if(framesToDisplayInstructions > 0) {
-            if(framesToDisplayInstructions <= 210) {
-                int colorNum = 210 - framesToDisplayInstructions;
-                g2.setColor(new Color(colorNum, colorNum, colorNum));
-            }
-            g2.drawString("WASD to move, hold mouse to shoot", fWidth / 2 - 205, fHeight / 2 - 70);
-            g2.drawString("SPACEBAR for quadruple speed", fWidth / 2 - 185, fHeight / 2 + 70);
-            framesToDisplayInstructions--;
         }
     }
 
@@ -175,12 +221,13 @@ public class ObjectsComponent extends JComponent
      * @param down boolean indicating if the down arrow key is pressed
      * @return void
      */
-    public void updateKeys(boolean left, boolean right, boolean up, boolean down, boolean firing) {
+    public void updateKeys(boolean left, boolean right, boolean up, boolean down, boolean firing, boolean autofire) {
         this.left = left;
         this.right = right;
         this.up = up;
         this.down = down;
         this.firing = firing;
+        this.autofire = autofire;
     }
 
     /**
@@ -212,18 +259,21 @@ public class ObjectsComponent extends JComponent
      * @return void
      */
     public void paintStats(Graphics g2) {
+        g2.setFont(new Font("TimesRoman", Font.PLAIN, 12)); 
         g2.setColor(Color.BLACK);
         g2.drawString("Left: " + left, 125, 150);
         g2.drawString("Right: " + right, 125, 250);
         g2.drawString("Up: " + up, 125, 350);
         g2.drawString("Down: " + down, 125, 450);
         g2.drawString("Firing: " + firing, 125, 550);
+        g2.drawString("Autofire: " + autofire, 125, 650);
         g2.drawString("MouseX: " + mouseX, 210, 150);
         g2.drawString("MouseY: " + mouseY, 210, 250);
 
         DecimalFormat df = new DecimalFormat("0,000,000,000");
 
         g2.drawString("Difficulty: " + df.format(difficulty) + "/ 2,147,400,000", 210, 350);
+        g2.drawString("Projectiles: " + enemyProjectiles.size() + userProjectiles.size(), 210, 450);
     }
 
     /**
@@ -252,7 +302,7 @@ public class ObjectsComponent extends JComponent
             enemyProjectiles.add(new ProjectileObject(Color.RED, enemyX, enemyY, user.getX(), user.getY(), 10));
     }
 
-    public void spawnEnemy(int maxEnemies, int frameDelay) {
+    public void spawnEnemy(int maxBosses, int maxEnemies, int frameDelay) {
         //frameDelay =- difficulty / 10000000;
         maxEnemies += difficulty / 300000000;
         enemyClock++;
@@ -271,8 +321,20 @@ public class ObjectsComponent extends JComponent
                 x = fWidth;
             } else// spawns west
                 y = (int)(Math.random() * fHeight);
-            enemies.add(new EnemyObject(x, y, Color.BLACK));
+            enemies.add(new EnemyObject(25, fWidth, fHeight, x, y, Color.BLACK, 3 + difficulty / 200000000));
             enemyShotClock.add(0);
+        }
+
+        if((int)(Math.random() * difficulty) > 1000000000 && bosses.size() < 3) {
+            if((int)(Math.random() * 180) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
+                int bossNum = (int)(Math.random() * 3) + 1;
+                if(bossNum == 1)
+                    bosses.add(new JustinLiu(fWidth, fHeight));
+                else if(bossNum == 2)
+                    bosses.add(new ThanatchaPanpairoj(fWidth, fHeight));
+                else
+                    bosses.add(new Jack(fWidth, fHeight));
+            }
         }
     }
 }
