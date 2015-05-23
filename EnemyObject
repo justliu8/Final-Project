@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 
 /**
  * Write a description of class EnemyObject here.
@@ -8,7 +10,64 @@ import java.awt.Color;
  */
 public class EnemyObject extends UserObject
 {
-    public EnemyObject(int x, int y, Color color) {
-        super(x, y, color);
+    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle, speed;
+    private int fWidth, fHeight;
+
+    public EnemyObject(int radius, int fWidth, int fHeight, int x, int y, Color color, double speed) {
+        super(radius, x, y, color);
+
+        this.fWidth = fWidth;
+        this.fHeight = fHeight;
+
+        currentX = x;
+        currentY = y;
+        
+        finalX = Math.random() * fWidth;
+        finalY = Math.random() * (fHeight - 30);
+        angle = Math.atan(Math.abs(finalY - currentY) / Math.abs(finalX - currentX));
+        
+        this.speed = speed;
+        
+        if(finalX > currentX)
+            xSpeed = Math.cos(angle) * speed;
+        else
+            xSpeed = -Math.cos(angle) * speed;
+        if(finalY > currentY)
+            ySpeed =  Math.sin(angle) * speed;
+        else
+            ySpeed = -Math.sin(angle) * speed;
+    }
+
+    /**
+     *Moves a enemy object along its path. 
+     *
+     *@param g2 the Graphics2D
+     *@return void
+     */
+    public void move() {
+        currentX += xSpeed;
+        currentY += ySpeed;
+        moveBy(xSpeed, ySpeed);
+        if(Math.abs(currentX - finalX) < 10 && Math.abs(currentY - finalY) < 10) {
+            finalX = Math.random() * fWidth;
+            finalY = Math.random() * (fHeight - 30);
+            angle = Math.atan(Math.abs(finalY - currentY) / Math.abs(finalX - currentX));
+            if(finalX > currentX)
+                xSpeed = Math.cos(angle) * speed;
+            else
+                xSpeed = -Math.cos(angle) * speed;
+            if(finalY > currentY)
+                ySpeed =  Math.sin(angle) * speed;
+            else
+                ySpeed = -Math.sin(angle) * speed;
+        }
+    }
+    
+    public double getCurrentX() {
+        return currentX + 75;
+    }
+    
+    public double getCurrentY() {
+        return currentY + 70;
     }
 }
