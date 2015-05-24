@@ -24,7 +24,7 @@ public class ProjectileObject
      *@param startingY the y coordinate of the mouse
      *@param pixelsPerSecond the speed of the projectile
      */
-    public ProjectileObject(Color color, double startingX, double startingY, double endingX, double endingY, double pixelsPerSecond) {
+    public ProjectileObject(Color color, double startingX, double startingY, double endingX, double endingY, double speed) {
         this.color = color;
 
         currentX = startingX;
@@ -35,13 +35,25 @@ public class ProjectileObject
 
         angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
         if(finalX > currentX)
-            xSpeed = Math.cos(angle) * pixelsPerSecond;
+            xSpeed = Math.cos(angle) * speed;
         else
-            xSpeed = -Math.cos(angle) * pixelsPerSecond;
+            xSpeed = -Math.cos(angle) * speed;
         if(finalY > currentY)
-            ySpeed =  Math.sin(angle) * pixelsPerSecond;
+            ySpeed =  Math.sin(angle) * speed;
         else
-            ySpeed = -Math.sin(angle) * pixelsPerSecond;
+            ySpeed = -Math.sin(angle) * speed;
+    }
+
+    public ProjectileObject(Color color, double startingX, double startingY, double angle, double speed) {
+        this.color = color;
+
+        currentX = startingX;
+        currentY = startingY;
+
+        angle *= Math.PI / 180;
+
+        xSpeed = Math.cos(angle) * speed;
+        ySpeed = Math.sin(angle) * speed;
     }
 
     /**
@@ -61,14 +73,12 @@ public class ProjectileObject
 
     /**
      *Moves a projectile object along its path. 
-     *Checks if the projectile is within the frame checking the existing boolean.
      *
-     *@param g2 the Graphics2D
      *@return void
      */
     public void move() {
-            currentX += xSpeed;
-            currentY += ySpeed;
+        currentX += xSpeed;
+        currentY += ySpeed;
     }
 
     public double getX() {
@@ -77,5 +87,18 @@ public class ProjectileObject
 
     public double getY() {
         return currentY;
+    }
+
+    public double getAngle() {
+        System.out.println("x" + xSpeed);
+        System.out.println("y" + ySpeed);
+        System.out.println(angle);
+        if(xSpeed > 0 && ySpeed < 0)
+            return -angle;
+        else if (xSpeed < 0 && ySpeed < 0)
+            return Math.PI + angle;
+        else if (xSpeed < 0 && ySpeed > 0)
+            return Math.PI - angle;
+        return angle;
     }
 }
