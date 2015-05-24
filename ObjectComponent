@@ -21,15 +21,16 @@ public class ObjectsComponent extends JComponent
     private UserObject user;
     private GridObject grid;
 
-    private boolean left, right, up, down, firing, autofire;
-    private int fWidth, fHeight, framesToDisplayInstructions, shotClock = 0, enemyClock = 0, score, difficulty;
-    private double mouseX, mouseY, time = 0;
+    private boolean left, right, up, down, firing, autofire, game;
+    private int fWidth, fHeight, framesToDisplayInstructions, shotClock, enemyClock, previousTCount, score, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed;
+    private double mouseX, mouseY, time;
 
     private ArrayList<ProjectileObject> userProjectiles;
     private ArrayList<ProjectileObject> enemyProjectiles;
     private ArrayList<EnemyObject> enemies;
     private ArrayList<Boss> bosses;
     private ArrayList<Integer> enemyShotClock;
+    private ArrayList<Integer> bossShotClock;
 
     /**
      * Initializes user object component. Sets the time to display the control instructions to 10 seconds(600 frames)
@@ -50,7 +51,16 @@ public class ObjectsComponent extends JComponent
 
         framesToDisplayInstructions = 600;
 
+        shotClock = 0;
+        enemyClock = 0;
+        previousTCount = 0;
+        time = 0;
+        lastShotAngle = 0;
+
         difficulty = 2147400000;
+        user.changeMaxHp(125);
+        user.changeHp(125);
+
         //difficulty = 1000000000;
         //difficulty = 0;
 
@@ -59,6 +69,9 @@ public class ObjectsComponent extends JComponent
         enemies = new ArrayList<EnemyObject>();
         bosses = new ArrayList<Boss>();
         enemyShotClock = new ArrayList<Integer>();
+        bossShotClock = new ArrayList<Integer>();
+
+        game = true;
     }
 
     /**
@@ -70,8 +83,19 @@ public class ObjectsComponent extends JComponent
      */
     public void paintComponent(Graphics g)
     {
+        Graphics2D g2 = (Graphics2D) g;
+
+        game = user.getHp() != 0;
+
         try{
-            time += 1.0 / 60;
+            if(game) {
+                time += 1.0 / 60;
+                if((int)(time % 10) == 0 && (int)(time) != previousTCount) {
+                    user.changeHp(1);
+                    previousTCount = (int)time;
+                }
+            }
+
             if(difficulty < 1000000000)
                 difficulty += 200000;
             else if(difficulty < 1500000000)
@@ -81,21 +105,14 @@ public class ObjectsComponent extends JComponent
             else if(difficulty < 2147400000)
                 difficulty += 50000;
 
-            Graphics2D g2 = (Graphics2D) g;
-
             grid.draw(g2, fWidth, fHeight);
-
             for(int e = 0; e < enemies.size(); e++) {
                 EnemyObject enemy = enemies.get(e);
                 enemy.draw(g2);
-                enemyShoot(e, enemy.getX(), enemy.getY(), 60);
-                enemy.move();
-            }
-
-            for(int b = 0; b < bosses.size(); b++) {
-                Boss boss = bosses.get(b);
-                boss.draw(g2);
-                boss.move();
+                if(game) {
+                    enemyShoot(e, enemy.getX(), enemy.getY(), 60);
+                    enemy.move();
+                }
             }
 
             for(int p = 0; p < userProjectiles.size(); p++) {
@@ -112,6 +129,7 @@ public class ObjectsComponent extends JComponent
                             if(boss.getHp() == 0) {
                                 bosses.remove(b--);
                                 updateScore(10 + 20 * (difficulty / 10000000));
+                                bossesDestroyed++;
                                 break;
                             }
                         }
@@ -125,12 +143,14 @@ public class ObjectsComponent extends JComponent
                                 enemyShotClock.remove(e--);
                                 userProjectiles.remove(p--);
                                 updateScore(10 + (difficulty / 10000000));
+                                enemiesDestroyed++;
                                 break;
                             }
                         }
                     }
                     projectile.draw(g2);
-                    projectile.move();
+                    if(game)
+                        projectile.move();
                 } else
                     userProjectiles.remove(p--);
             }
@@ -140,20 +160,56 @@ public class ObjectsComponent extends JComponent
                 double x = projectile.getX();
                 double y = projectile.getY();
 
-                if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
+                if(x >= -20 && x <= fWidth + 20 && y >= -20 && y <= fHeight + 20) {
                     projectile.draw(g2);
-                    projectile.move();
+                    if(game)
+                        projectile.move();
                     projectile.draw(g2);
-                    projectile.move();
+                    if(game)
+                        projectile.move();
                     if(Math.pow(user.getX() - x, 2) + Math.pow(user.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
                         user.changeHp(-1);
-                        enemyProjectiles.remove(p--);
+                        if(game)
+                            enemyProjectiles.remove(p--);
+                    }
+                    for(int b = 0; b < bosses.size(); b++) {
+                        Boss boss = bosses.get(b);
+                        if(boss.getName() == "Jack" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
+                            enemyProjectiles.remove(p--);
+                            break;
+                        }
                     }
                 } else 
                     enemyProjectiles.remove(p--);
             }
 
-            user.draw(g2);
+            for(int b = 0; b < bosses.size(); b++) {
+                Boss boss = bosses.get(b);
+                boss.draw(g2);
+                if(game) {
+                    bossShoot(b, boss.getX(), boss.getY(), 3);
+                    boss.move();
+                }
+            }
+
+            if(game)
+                user.draw(g2);
+            else {
+                Rectangle back = new Rectangle(0, 0, fWidth, fHeight);
+                g2.setColor(new Color(1f, 1f, 1f, 0.4f));
+                g2.fill(back);
+
+                g2.setPaint(Color.BLACK);
+                g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
+                g2.drawString("GAME OVER", fWidth / 2 - 300, fHeight / 2);
+
+                g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 40));
+                g2.drawString("SCORE: " + score, fWidth / 2 - 120, fHeight / 2 + 80);
+
+                g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 20));
+                g2.drawString("Enemies destroyed: " + enemiesDestroyed, fWidth / 2 - 120, fHeight / 2 + 110);
+                g2.drawString("Bosses destroyed: " + bossesDestroyed, fWidth / 2 - 120, fHeight / 2 + 140);
+            }
 
             paintStats(g2);
 
@@ -165,10 +221,11 @@ public class ObjectsComponent extends JComponent
             g2.setPaint(Color.BLACK);
             g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
             g2.drawString("SCORE: " + score, 30, fHeight - 50);
+
             g2.drawString("HP: " + user.getHp() + " / " + user.getMaxHp(), 30, 40);
-            
+
             DecimalFormat df = new DecimalFormat("00");
-            g2.drawString(df.format((int)time / 60) + ":" + df.format((int)time), fWidth - 100, fHeight - 50);
+            g2.drawString(df.format((int)time / 60) + ":" + df.format((int)time % 60), fWidth - 100, fHeight - 50);
 
             if(framesToDisplayInstructions > 0) {
                 if(framesToDisplayInstructions <= 210) {
@@ -274,6 +331,7 @@ public class ObjectsComponent extends JComponent
 
         g2.drawString("Difficulty: " + df.format(difficulty) + "/ 2,147,400,000", 210, 350);
         g2.drawString("Projectiles: " + enemyProjectiles.size() + userProjectiles.size(), 210, 450);
+        g2.drawString("Enemies: " + enemies.size(), 210, 550);
     }
 
     /**
@@ -285,13 +343,13 @@ public class ObjectsComponent extends JComponent
      * @return void
      */
     public void userShoot(double mouseX, double mouseY, int frameDelay) {
-        //frameDelay = 1;
+        frameDelay = 1;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         shotClock++;
         shotClock %= frameDelay;
         if(shotClock == 0)
-            userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15));
+            userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 45));
     }
 
     public void enemyShoot(int enemyIndex, double enemyX, double enemyY, int frameDelay) {
@@ -299,12 +357,34 @@ public class ObjectsComponent extends JComponent
         enemyShotClock.set(enemyIndex, new Integer(i));
 
         if(i == 0)
-            enemyProjectiles.add(new ProjectileObject(Color.RED, enemyX, enemyY, user.getX(), user.getY(), 10));
+            enemyProjectiles.add(new ProjectileObject(Color.RED, enemyX, enemyY, user.getX(), user.getY(), 5 + difficulty / 400000000));
+    }
+
+    public void bossShoot(int bossIndex, double bossX, double bossY, int frameDelay) {
+        int i = ((bossShotClock.get(bossIndex) + 1) % frameDelay);
+        bossShotClock.set(bossIndex, new Integer(i));
+
+        if(bosses.get(bossIndex).getName() == "Thanatcha Panpairoj" && i == 0) {
+            lastShotAngle += 2;
+            lastShotAngle %= 360;
+            for(int p = 0; p < 6; p++)
+                enemyProjectiles.add(new ProjectileObject(new Color(128, 0, 128), bossX, bossY, 360 / 6 * p + lastShotAngle, 5));
+        } else if (bosses.get(bossIndex).getName() == "Justin Liu" && i == 0) {
+            int speed = 5 + difficulty / 400000000;
+            ProjectileObject middleProjectile = new ProjectileObject(Color.ORANGE, bossX, bossY, user.getX(), user.getY(), speed);
+            enemyProjectiles.add(middleProjectile);
+            double angle = middleProjectile.getAngle() * 180 / Math.PI;
+            enemyProjectiles.add(new ProjectileObject(Color.ORANGE, bossX, bossY, angle + 20, speed));
+            enemyProjectiles.add(new ProjectileObject(Color.ORANGE, bossX, bossY, angle + 10, speed));
+            enemyProjectiles.add(new ProjectileObject(Color.ORANGE, bossX, bossY, angle - 10, speed));
+            enemyProjectiles.add(new ProjectileObject(Color.ORANGE, bossX, bossY, angle - 20, speed));
+        }
     }
 
     public void spawnEnemy(int maxBosses, int maxEnemies, int frameDelay) {
+        if(game)
         //frameDelay =- difficulty / 10000000;
-        maxEnemies += difficulty / 300000000;
+            maxEnemies += difficulty / 300000000 * 2;
         enemyClock++;
         enemyClock %= (frameDelay - (difficulty / 10000000));
         if(enemyClock == 0 && enemies.size() < maxEnemies) {
@@ -327,13 +407,36 @@ public class ObjectsComponent extends JComponent
 
         if((int)(Math.random() * difficulty) > 1000000000 && bosses.size() < 3) {
             if((int)(Math.random() * 180) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
-                int bossNum = (int)(Math.random() * 3) + 1;
-                if(bossNum == 1)
-                    bosses.add(new JustinLiu(fWidth, fHeight));
-                else if(bossNum == 2)
-                    bosses.add(new ThanatchaPanpairoj(fWidth, fHeight));
-                else
-                    bosses.add(new Jack(fWidth, fHeight));
+                boolean spawned = false;
+                boolean JL = false;
+                boolean TP = false;
+                boolean J = false;
+
+                for(int b = 0; b < bosses.size(); b++) {
+                    String bossName = bosses.get(b).getName();
+                    if(bossName == "Justin Liu") 
+                        JL = true;
+                    else if (bossName == "Thanatcha Panpairoj") 
+                        TP = true;
+                    else
+                        J = true;
+                }
+
+                while(!spawned) {
+                    int bossNum = (int)(Math.random() * 3) + 1;
+                    if(bossNum == 1 && !JL) {
+                        bosses.add(new JustinLiu(fWidth, fHeight));
+                        spawned = true;
+                    } else if(bossNum == 2 && !TP) {
+                        bosses.add(new ThanatchaPanpairoj(fWidth, fHeight));
+                        spawned = true;
+                    } else if(bossNum == 3 && !J) {
+                        bosses.add(new Jack(fWidth, fHeight));
+                        spawned = true;
+                    }
+                }
+
+                bossShotClock.add(0);
             }
         }
     }
