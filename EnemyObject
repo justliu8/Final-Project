@@ -49,8 +49,8 @@ public class EnemyObject extends UserObject
         currentY += ySpeed;
         moveBy(xSpeed, ySpeed);
         if(Math.abs(currentX - finalX) < 10 && Math.abs(currentY - finalY) < 10) {
-            finalX = Math.random() * fWidth;
-            finalY = Math.random() * (fHeight - 30);
+            finalX = 20 + Math.random() * (fWidth - 40);
+            finalY = 20 + Math.random() * (fHeight - 70);
             angle = Math.atan(Math.abs(finalY - currentY) / Math.abs(finalX - currentX));
             if(finalX > currentX)
                 xSpeed = Math.cos(angle) * speed;
