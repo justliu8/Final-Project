@@ -57,9 +57,9 @@ public class ObjectsComponent extends JComponent
         time = 0;
         lastShotAngle = 0;
 
-        difficulty = 2147400000;
-        user.changeMaxHp(125);
-        user.changeHp(125);
+//         difficulty = 2147400000;
+//         for(int i = 1; i <= 20; i++)
+//             user.addXp(1000 * i);//sets the user level to max(for testing)
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -90,8 +90,8 @@ public class ObjectsComponent extends JComponent
         try{
             if(game) {
                 time += 1.0 / 60;
-                if((int)(time % 10) == 0 && (int)(time) != previousTCount) {
-                    user.changeHp(1);
+                if((int)(time % (11 - user.getLevel() / 2)) == 0 && (int)(time) != previousTCount) {
+                    user.changeHp(1 + user.getLevel() / 8);
                     previousTCount = (int)time;
                 }
             }
@@ -128,7 +128,9 @@ public class ObjectsComponent extends JComponent
                             userProjectiles.remove(p--);
                             if(boss.getHp() == 0) {
                                 bosses.remove(b--);
-                                updateScore(10 + 20 * (difficulty / 10000000));
+                                int points = 10 + 20 * (difficulty / 10000000);
+                                updateScore(points);
+                                user.addXp(points);
                                 bossesDestroyed++;
                                 break;
                             }
@@ -142,7 +144,9 @@ public class ObjectsComponent extends JComponent
                                 enemies.remove(e);
                                 enemyShotClock.remove(e--);
                                 userProjectiles.remove(p--);
-                                updateScore(10 + (difficulty / 10000000));
+                                int points = 10 + (difficulty / 10000000);
+                                updateScore(points);
+                                user.addXp(points);
                                 enemiesDestroyed++;
                                 break;
                             }
@@ -344,7 +348,7 @@ public class ObjectsComponent extends JComponent
      */
     public void userShoot(double mouseX, double mouseY, int frameDelay) {
         if(game) {
-            frameDelay = 1;
+            frameDelay -= (user.getLevel() - 2) / 2;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
             shotClock++;
@@ -358,7 +362,7 @@ public class ObjectsComponent extends JComponent
                 //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle + 15, 45));
                 //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle - 15, 45));
 
-                userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 45));
+                userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5));
             }
         }
     }
