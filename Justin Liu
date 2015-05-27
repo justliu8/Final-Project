@@ -10,25 +10,35 @@ import java.awt.Font;
  */
 public class JustinLiu extends EnemyObject implements Boss
 {
+    private String name;
+
     public JustinLiu(int fWidth, int fHeight) {
         super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 3);
+        name = "Justin Liu";
         changeMaxHp(45);
         changeHp(45);
     }
-    
+
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        
-        g2.setColor(Color.WHITE);
+
+        //         g2.setColor(Color.GREEN);
+        //         g2.fillArc((int)(super.getX() - 25), (int)(super.getY() - 25), 2 * getRadius(), 2 * getRadius(), 0, (int)(360 - 360.0 * getHp() / getMaxHp())); 
+
+        g2.setColor(Color.BLACK);
         g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
         g2.drawString("Justin Liu", (int)(super.getX() + 15), (int)(super.getY()) + 85);
     }
-    
+
     public double getX() {
         return super.getCurrentX();
     }
-    
+
     public double getY() {
         return super.getCurrentY();
+    }
+
+    public String getName() {
+        return name;
     }
 }
