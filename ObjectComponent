@@ -174,7 +174,7 @@ public class ObjectsComponent extends JComponent
                     }
                     for(int b = 0; b < bosses.size(); b++) {
                         Boss boss = bosses.get(b);
-                        if(boss.getName() == "Jack" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
+                        if(boss.getName() == "Jack Weng" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
                             enemyProjectiles.remove(p--);
                             break;
                         }
@@ -441,7 +441,7 @@ public class ObjectsComponent extends JComponent
                             bosses.add(new ThanatchaPanpairoj(fWidth, fHeight));
                             spawned = true;
                         } else if(bossNum == 3 && !J) {
-                            bosses.add(new Jack(fWidth, fHeight));
+                            bosses.add(new JackWeng(fWidth, fHeight));
                             spawned = true;
                         }
                     }
