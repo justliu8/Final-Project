@@ -13,7 +13,7 @@ public class UserObject
     private double xLeft;
     private double yTop;
     private Color color;
-    private int hp, hpMax, radius;
+    private int hp, maxHp, radius, level;
 
     /**
     Constructs an user object with a given center.
@@ -24,9 +24,10 @@ public class UserObject
     {
         this.radius = radius;
         hp = 5;
-        hpMax = 5;
+        maxHp = 5;
         xLeft = x;
         yTop = y;
+        level = 1;
         this.color = color;
     }
 
@@ -38,6 +39,7 @@ public class UserObject
     {
         Ellipse2D.Double circle = new Ellipse2D.Double(xLeft - 25, yTop - 25, 2 * radius, 2 * radius);
         //could be any object, doesn't have to be an ellipse
+        g2.setColor(color);
         g2.draw(circle);
 
         g2.setPaint(color);
@@ -87,6 +89,15 @@ public class UserObject
     }
 
     /**
+     * Returns radius of user object.
+     *
+     * @return radius
+     */
+    public int getRadius() {
+        return radius;
+    }
+    
+    /**
      * Returns hp of user object.
      *
      * @return hp
@@ -101,7 +112,7 @@ public class UserObject
      * @return hp
      */
     public int getMaxHp() {
-        return hpMax;
+        return maxHp;
     }
 
     /**
@@ -112,14 +123,16 @@ public class UserObject
     public void changeHp(int dHp) {
         if(hp > 0)
             hp += dHp;
+        if(hp > maxHp)
+            hp = maxHp;
     }
-    
+
     /**
      * Changes user's max hp by an amount.
      *
      * @param dMaxHp change in MaxHp
      */
     public void changeMaxHp(double dMaxHp) {
-        hpMax += dMaxHp;
+        maxHp += dMaxHp;
     }
 }
