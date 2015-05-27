@@ -11,6 +11,7 @@ import java.awt.Color;
 public class ProjectileObject
 {
     private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle;
+    private int damage;
     private Ellipse2D projectile;
     private Color color;
 
@@ -24,7 +25,9 @@ public class ProjectileObject
      *@param startingY the y coordinate of the mouse
      *@param pixelsPerSecond the speed of the projectile
      */
-    public ProjectileObject(Color color, double startingX, double startingY, double endingX, double endingY, double speed) {
+    public ProjectileObject(int damage, Color color, double startingX, double startingY, double endingX, double endingY, double speed) {
+        this.damage = damage;
+        
         this.color = color;
 
         currentX = startingX;
@@ -44,7 +47,9 @@ public class ProjectileObject
             ySpeed = -Math.sin(angle) * speed;
     }
 
-    public ProjectileObject(Color color, double startingX, double startingY, double angle, double speed) {
+    public ProjectileObject(int damage, Color color, double startingX, double startingY, double angle, double speed) {
+        this.damage = damage;
+        
         this.color = color;
 
         currentX = startingX;
@@ -100,5 +105,9 @@ public class ProjectileObject
         else if (xSpeed < 0 && ySpeed > 0)
             return Math.PI - angle;
         return angle;
+    }
+    
+    public int getDamage() {
+        return damage;
     }
 }
