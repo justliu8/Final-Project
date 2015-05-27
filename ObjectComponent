@@ -343,13 +343,24 @@ public class ObjectsComponent extends JComponent
      * @return void
      */
     public void userShoot(double mouseX, double mouseY, int frameDelay) {
-        frameDelay = 1;
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
-        shotClock++;
-        shotClock %= frameDelay;
-        if(shotClock == 0)
-            userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 45));
+        if(game) {
+            frameDelay = 1;
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+            shotClock++;
+            shotClock %= frameDelay;
+            if(shotClock == 0) {
+                //                 double userX = user.getX();
+                //                 double userY = user.getY();
+                //                 ProjectileObject middleProjectile = new ProjectileObject(Color.GREEN, userX, userY, mouseX, mouseY, 45);
+                //                 double angle = middleProjectile.getAngle() * 180 / Math.PI;
+                //                 userProjectiles.add(middleProjectile);
+                //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle + 15, 45));
+                //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle - 15, 45));
+
+                userProjectiles.add(new ProjectileObject(Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 45));
+            }
+        }
     }
 
     public void enemyShoot(int enemyIndex, double enemyX, double enemyY, int frameDelay) {
@@ -365,7 +376,7 @@ public class ObjectsComponent extends JComponent
         bossShotClock.set(bossIndex, new Integer(i));
 
         if(bosses.get(bossIndex).getName() == "Thanatcha Panpairoj" && i == 0) {
-            lastShotAngle += 2;
+            lastShotAngle -= 5;
             lastShotAngle %= 360;
             for(int p = 0; p < 6; p++)
                 enemyProjectiles.add(new ProjectileObject(new Color(128, 0, 128), bossX, bossY, 360 / 6 * p + lastShotAngle, 5));
@@ -382,61 +393,61 @@ public class ObjectsComponent extends JComponent
     }
 
     public void spawnEnemy(int maxBosses, int maxEnemies, int frameDelay) {
-        if(game)
-        //frameDelay =- difficulty / 10000000;
+        if(game) {
             maxEnemies += difficulty / 300000000 * 2;
-        enemyClock++;
-        enemyClock %= (frameDelay - (difficulty / 10000000));
-        if(enemyClock == 0 && enemies.size() < maxEnemies) {
-            int x = 0;
-            int y = 0;
-            int ranNum = (int)(Math.random() * 4) + 1;//random number 1-4
-            if(ranNum == 1)//spawns north
-                x = (int)(Math.random() * fWidth);
-            else if(ranNum == 2) {//spawns south
-                x = (int)(Math.random() * fWidth);
-                y = fHeight - 30;
-            } else if(ranNum == 3) {//spawns east
-                y = (int)(Math.random() * fHeight);
-                x = fWidth;
-            } else// spawns west
-                y = (int)(Math.random() * fHeight);
-            enemies.add(new EnemyObject(25, fWidth, fHeight, x, y, Color.BLACK, 3 + difficulty / 200000000));
-            enemyShotClock.add(0);
-        }
+            enemyClock++;
+            enemyClock %= (frameDelay - (difficulty / 10000000));
+            if(enemyClock == 0 && enemies.size() < maxEnemies) {
+                int x = 0;
+                int y = 0;
+                int ranNum = (int)(Math.random() * 4) + 1;//random number 1-4
+                if(ranNum == 1)//spawns north
+                    x = (int)(Math.random() * fWidth);
+                else if(ranNum == 2) {//spawns south
+                    x = (int)(Math.random() * fWidth);
+                    y = fHeight - 30;
+                } else if(ranNum == 3) {//spawns east
+                    y = (int)(Math.random() * fHeight);
+                    x = fWidth;
+                } else// spawns west
+                    y = (int)(Math.random() * fHeight);
+                enemies.add(new EnemyObject(25, fWidth, fHeight, x, y, Color.BLACK, 3 + difficulty / 200000000));
+                enemyShotClock.add(0);
+            }
 
-        if((int)(Math.random() * difficulty) > 1000000000 && bosses.size() < 3) {
-            if((int)(Math.random() * 180) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
-                boolean spawned = false;
-                boolean JL = false;
-                boolean TP = false;
-                boolean J = false;
+            if((int)(Math.random() * difficulty) > 1000000000 && bosses.size() < 3) {
+                if((int)(Math.random() * 180) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
+                    boolean spawned = false;
+                    boolean JL = false;
+                    boolean TP = false;
+                    boolean J = false;
 
-                for(int b = 0; b < bosses.size(); b++) {
-                    String bossName = bosses.get(b).getName();
-                    if(bossName == "Justin Liu") 
-                        JL = true;
-                    else if (bossName == "Thanatcha Panpairoj") 
-                        TP = true;
-                    else
-                        J = true;
-                }
-
-                while(!spawned) {
-                    int bossNum = (int)(Math.random() * 3) + 1;
-                    if(bossNum == 1 && !JL) {
-                        bosses.add(new JustinLiu(fWidth, fHeight));
-                        spawned = true;
-                    } else if(bossNum == 2 && !TP) {
-                        bosses.add(new ThanatchaPanpairoj(fWidth, fHeight));
-                        spawned = true;
-                    } else if(bossNum == 3 && !J) {
-                        bosses.add(new Jack(fWidth, fHeight));
-                        spawned = true;
+                    for(int b = 0; b < bosses.size(); b++) {
+                        String bossName = bosses.get(b).getName();
+                        if(bossName == "Justin Liu") 
+                            JL = true;
+                        else if (bossName == "Thanatcha Panpairoj") 
+                            TP = true;
+                        else
+                            J = true;
                     }
-                }
 
-                bossShotClock.add(0);
+                    while(!spawned) {
+                        int bossNum = (int)(Math.random() * 3) + 1;
+                        if(bossNum == 1 && !JL) {
+                            bosses.add(new JustinLiu(fWidth, fHeight));
+                            spawned = true;
+                        } else if(bossNum == 2 && !TP) {
+                            bosses.add(new ThanatchaPanpairoj(fWidth, fHeight));
+                            spawned = true;
+                        } else if(bossNum == 3 && !J) {
+                            bosses.add(new Jack(fWidth, fHeight));
+                            spawned = true;
+                        }
+                    }
+
+                    bossShotClock.add(0);
+                }
             }
         }
     }
