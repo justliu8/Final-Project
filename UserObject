@@ -13,7 +13,7 @@ public class UserObject
     private double xLeft;
     private double yTop;
     private Color color;
-    private int hp, maxHp, radius, level;
+    private int hp, maxHp, radius, level, xp;
 
     /**
     Constructs an user object with a given center.
@@ -113,6 +113,24 @@ public class UserObject
      */
     public int getMaxHp() {
         return maxHp;
+    }
+    
+    /**
+     * Returns level of user object.
+     *
+     * @return level
+     */
+    public int getLevel() {
+        return level;
+    }
+    
+    public void addXp(int dXp) {
+        xp += dXp;
+        if(xp >= level * 1000 && level <= 20) {
+            level++;
+            xp %= level * 1000;
+            maxHp += 1 + level / 4;
+        }
     }
 
     /**
