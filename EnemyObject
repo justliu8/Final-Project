@@ -12,10 +12,13 @@ public class EnemyObject extends UserObject
 {
     private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle, speed;
     private int fWidth, fHeight;
+    private Color color;
 
     public EnemyObject(int radius, int fWidth, int fHeight, int x, int y, Color color, double speed) {
         super(radius, x, y, color);
 
+        this.color = color;
+        
         this.fWidth = fWidth;
         this.fHeight = fHeight;
 
@@ -36,6 +39,22 @@ public class EnemyObject extends UserObject
             ySpeed =  Math.sin(angle) * speed;
         else
             ySpeed = -Math.sin(angle) * speed;
+    }
+    
+    
+    /**
+    Draws the object.
+    @param g2 the graphics context
+     */
+    public void draw(Graphics2D g2)
+    {
+        Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
+        //could be any object, doesn't have to be an ellipse
+        g2.setColor(color);
+        g2.draw(circle);
+
+        g2.setPaint(color);
+        g2.fill(circle);
     }
 
     /**
