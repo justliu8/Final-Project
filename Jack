@@ -8,10 +8,13 @@ import java.awt.Font;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Jack extends EnemyObject implements Boss
+public class JackWeng extends EnemyObject implements Boss
 {
-    public Jack(int fWidth, int fHeight) {
-        super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 3);
+    private String name;
+
+    public JackWeng(int fWidth, int fHeight) {
+        super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 2);
+        name = "Jack Weng";
         changeMaxHp(45);
         changeHp(45);
     }
@@ -19,9 +22,12 @@ public class Jack extends EnemyObject implements Boss
     public void draw(Graphics2D g2) {
         super.draw(g2);
 
-        g2.setColor(Color.WHITE);
+        //         g2.setColor(Color.GREEN);
+        //         g2.fillArc((int)(super.getX() - 25), (int)(super.getY() - 25), 2 * getRadius(), 2 * getRadius(), 0, (int)(360 - 360.0 * getHp() / getMaxHp())); 
+
+        g2.setColor(Color.BLACK);
         g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
-        g2.drawString("Jack", (int)(super.getX() + 47), (int)(super.getY()) + 85);
+        g2.drawString("Jack Weng", (int)(super.getX() + 12), (int)(super.getY()) + 85);
     }
 
     public double getX() {
@@ -30,5 +36,9 @@ public class Jack extends EnemyObject implements Boss
 
     public double getY() {
         return super.getCurrentY();
+    }
+
+    public String getName() {
+        return name;
     }
 }
