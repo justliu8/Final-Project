@@ -19,4 +19,6 @@ public interface Boss
     void changeHp(int dHp);
     
     int getHp();
+    
+    String getName();
 }
