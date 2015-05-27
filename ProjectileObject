@@ -90,9 +90,9 @@ public class ProjectileObject
     }
 
     public double getAngle() {
-        System.out.println("x" + xSpeed);
-        System.out.println("y" + ySpeed);
-        System.out.println(angle);
+//         System.out.println("x" + xSpeed);
+//         System.out.println("y" + ySpeed);
+//         System.out.println(angle);
         if(xSpeed > 0 && ySpeed < 0)
             return -angle;
         else if (xSpeed < 0 && ySpeed < 0)
