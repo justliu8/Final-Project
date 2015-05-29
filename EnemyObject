@@ -48,15 +48,29 @@ public class EnemyObject extends UserObject
     @param g2 the graphics context
      */
     public void draw(Graphics2D g2) {
+        public void draw(Graphics2D g2) {
         if(super.getMaxHp() > 6)
         {
             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //could be any object, doesn't have to be an ellipse
+            Ellipse2D.Double circle2 = new Ellipse2D.Double(currentX - getRadius()/2+70, currentY+60 , 20, 20);
+            Ellipse2D.Double circle3 = new Ellipse2D.Double(currentX + getRadius()/2+60, currentY+60 , 20, 20);
             g2.setColor(color);
             g2.draw(circle);
 
             g2.setPaint(color);
             g2.fill(circle);
+
+            g2.setColor(Color.WHITE);
+            Line2D.Double segment=new Line2D.Double(getX(), getY(), getX()-getRadius()/2, getY()-getRadius()/2);
+            Line2D.Double segment2=new Line2D.Double(getX(), getY(), getX()+getRadius()/2, getY()-getRadius()/2);
+            g2.draw(segment);
+            g2.draw(segment2);
+            g2.fill(circle3);
+            g2.fill(circle2);
+            //         g2.drawArc((int)getX()-getRadius()/2-5, (int)getY()-getRadius()/2, (int)getRadius()/2-2, (int)getRadius()/2-2, 180, 180);
+            //         g2.drawArc((int)getX()+getRadius()/2-5, (int)getY()-getRadius()/2, (int)getRadius()/2-2, (int)getRadius()/2-2, 180, 180);
+            g2.drawArc((int)getX()-getRadius()/2, (int)getY()+getRadius()/2, (int)getRadius(), (int)getRadius()/2, 0,180);
         } else {
             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //could be any object, doesn't have to be an ellipse
