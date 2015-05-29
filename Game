@@ -25,7 +25,7 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false;
+    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false;
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
@@ -61,7 +61,7 @@ public class Game
                 mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
 
                 int speedUp = 1;
-                if(space)
+                if(space || autospeed)
                     speedUp = 4;
 
                 if (right && up && !left)
@@ -129,6 +129,10 @@ public class Game
                     autofire = true;
                 else if((c == 'f' || c == 'F') && autofire)
                     autofire = false;
+                else if ((c == 'v' || c == 'V') && !autospeed)
+                    autospeed = true;
+                else if((c == 'v' || c == 'V') && autospeed)
+                    autospeed = false;
             }
         }
 
