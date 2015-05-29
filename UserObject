@@ -96,7 +96,7 @@ public class UserObject
     public int getRadius() {
         return radius;
     }
-    
+
     /**
      * Returns hp of user object.
      *
@@ -114,7 +114,7 @@ public class UserObject
     public int getMaxHp() {
         return maxHp;
     }
-    
+
     /**
      * Returns level of user object.
      *
@@ -123,12 +123,12 @@ public class UserObject
     public int getLevel() {
         return level;
     }
-    
+
     public void addXp(int dXp) {
         xp += dXp;
-        if(xp >= level * 1000 && level <= 20) {
+        if((level < 15 && xp >= 1000) || (level < 20 && xp >= 5000)) {
+            xp = 0;
             level++;
-            xp %= level * 1000;
             maxHp += 1 + level / 4;
         }
     }
@@ -143,6 +143,8 @@ public class UserObject
             hp += dHp;
         if(hp > maxHp)
             hp = maxHp;
+        if(hp < 0)
+            hp = 0;
     }
 
     /**
