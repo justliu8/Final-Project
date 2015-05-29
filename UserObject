@@ -23,7 +23,7 @@ public class UserObject
     public UserObject(int radius, int x, int y, Color color)
     {
         this.radius = radius;
-        hp = 5;
+        hp = 6;
         maxHp = 5;
         xLeft = x;
         yTop = y;
@@ -126,7 +126,7 @@ public class UserObject
 
     public void addXp(int dXp) {
         xp += dXp;
-        if((level < 15 && xp >= 1000) || (level < 20 && xp >= 5000)) {
+        if((level < 15 && xp >= 1000) || (level < 20 && xp >= 10000)) {
             xp = 0;
             level++;
             maxHp += 1 + level / 4;
