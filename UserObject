@@ -44,6 +44,16 @@ public class UserObject
 
         g2.setPaint(color);
         g2.fill(circle);
+        
+//         Line2D.Double segment=new Line2D.Double(xLeft-radius/2, yTop-radius/2, xLeft-radius/2+5, yTop-radius/2);
+//         Line2D.Double segment2=new Line2D.Double(xLeft+radius/2, yTop-radius/2, xLeft+radius/2-5, yTop-radius/2);
+        
+        g2.setColor(Color.WHITE);
+//         g2.draw(segment);
+//         g2.draw(segment2);
+        g2.drawArc((int)xLeft-radius/2-5, (int)yTop-radius/2, (int)radius/2-2, (int)radius/2-2, 0, 180);
+        g2.drawArc((int)xLeft+radius/2-5, (int)yTop-radius/2, (int)radius/2-2, (int)radius/2-2, 0, 180);
+        g2.drawArc((int)xLeft-radius/2, (int)yTop+radius/2-10, (int)radius, (int)radius/2, 180,180);
     }
 
     /**
