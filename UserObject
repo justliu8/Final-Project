@@ -24,7 +24,7 @@ public class UserObject
     {
         this.radius = radius;
         hp = 6;
-        maxHp = 5;
+        maxHp = 6;
         xLeft = x;
         yTop = y;
         level = 1;
