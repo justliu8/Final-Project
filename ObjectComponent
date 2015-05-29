@@ -60,7 +60,6 @@ public class ObjectsComponent extends JComponent
 //         difficulty = 2147400000;
 //         for(int i = 1; i <= 20; i++)
 //             user.addXp(1000 * i);//sets the user level to max(for testing)
-// 
 //         score = 300000;
             
         //difficulty = 1000000000;
@@ -443,13 +442,13 @@ public class ObjectsComponent extends JComponent
                     while(!spawned) {
                         int bossNum = (int)(Math.random() * 3) + 1;
                         if(bossNum == 1 && !JL) {
-                            bosses.add(new JustinLiu(40 + score / 5000, fWidth, fHeight));
+                            bosses.add(new JustinLiu(40 + score / 4000, fWidth, fHeight));
                             spawned = true;
                         } else if(bossNum == 2 && !TP) {
-                            bosses.add(new ThanatchaPanpairoj(40 + score / 5000, fWidth, fHeight));
+                            bosses.add(new ThanatchaPanpairoj(40 + score / 4000, fWidth, fHeight));
                             spawned = true;
                         } else if(bossNum == 3 && !J) {
-                            bosses.add(new JackWeng(40 + score / 5000, fWidth, fHeight));
+                            bosses.add(new JackWeng(40 + score / 4000, fWidth, fHeight));
                             spawned = true;
                         }
                     }
