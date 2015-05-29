@@ -20,19 +20,19 @@ public class EnemyObject extends UserObject
         super(radius, x, y, color);
 
         this.color = color;
-        
+
         this.fWidth = fWidth;
         this.fHeight = fHeight;
 
         currentX = x;
         currentY = y;
-        
+
         finalX = Math.random() * fWidth;
         finalY = Math.random() * (fHeight - 30);
         angle = Math.atan(Math.abs(finalY - currentY) / Math.abs(finalX - currentX));
-        
+
         this.speed = speed;
-        
+
         if(finalX > currentX)
             xSpeed = Math.cos(angle) * speed;
         else
@@ -42,34 +42,43 @@ public class EnemyObject extends UserObject
         else
             ySpeed = -Math.sin(angle) * speed;
     }
-    
-    
+
     /**
     Draws the object.
     @param g2 the graphics context
      */
-    public void draw(Graphics2D g2)
-    {
-        Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
-        //could be any object, doesn't have to be an ellipse
-        Ellipse2D.Double circle2 = new Ellipse2D.Double(currentX - getRadius()/2, currentY , 5, 5);
-        Ellipse2D.Double circle3 = new Ellipse2D.Double(currentX + getRadius()/2-5, currentY , 5, 5);
-        g2.setColor(color);
-        g2.draw(circle);
+    public void draw(Graphics2D g2) {
+        if(super.getMaxHp() > 6)
+        {
+            Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
+            //could be any object, doesn't have to be an ellipse
+            g2.setColor(color);
+            g2.draw(circle);
 
-        g2.setPaint(color);
-        g2.fill(circle);
-        
-        g2.setColor(Color.WHITE);
-        Line2D.Double segment=new Line2D.Double(getX(), getY(), getX()-getRadius(), getY()-getRadius());
-        Line2D.Double segment2=new Line2D.Double(getX(), getY(), getX()+getRadius(), getY()-getRadius());
-        g2.draw(segment);
-        g2.draw(segment2);
-        g2.fill(circle3);
-        g2.fill(circle2);
-//         g2.drawArc((int)getX()-getRadius()/2-5, (int)getY()-getRadius()/2, (int)getRadius()/2-2, (int)getRadius()/2-2, 180, 180);
-//         g2.drawArc((int)getX()+getRadius()/2-5, (int)getY()-getRadius()/2, (int)getRadius()/2-2, (int)getRadius()/2-2, 180, 180);
-        g2.drawArc((int)getX()-getRadius()/2, (int)getY()+getRadius()/2, (int)getRadius(), (int)getRadius()/2, 0,180);
+            g2.setPaint(color);
+            g2.fill(circle);
+        } else {
+            Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
+            //could be any object, doesn't have to be an ellipse
+            Ellipse2D.Double circle2 = new Ellipse2D.Double(currentX - getRadius()/2, currentY , 5, 5);
+            Ellipse2D.Double circle3 = new Ellipse2D.Double(currentX + getRadius()/2-5, currentY , 5, 5);
+            g2.setColor(color);
+            g2.draw(circle);
+
+            g2.setPaint(color);
+            g2.fill(circle);
+
+            g2.setColor(Color.WHITE);
+            Line2D.Double segment=new Line2D.Double(getX(), getY(), getX()-getRadius(), getY()-getRadius());
+            Line2D.Double segment2=new Line2D.Double(getX(), getY(), getX()+getRadius(), getY()-getRadius());
+            g2.draw(segment);
+            g2.draw(segment2);
+            g2.fill(circle3);
+            g2.fill(circle2);
+            //         g2.drawArc((int)getX()-getRadius()/2-5, (int)getY()-getRadius()/2, (int)getRadius()/2-2, (int)getRadius()/2-2, 180, 180);
+            //         g2.drawArc((int)getX()+getRadius()/2-5, (int)getY()-getRadius()/2, (int)getRadius()/2-2, (int)getRadius()/2-2, 180, 180);
+            g2.drawArc((int)getX()-getRadius()/2, (int)getY()+getRadius()/2, (int)getRadius(), (int)getRadius()/2, 0,180);
+        }
     }
 
     /**
@@ -96,11 +105,11 @@ public class EnemyObject extends UserObject
                 ySpeed = -Math.sin(angle) * speed;
         }
     }
-    
+
     public double getCurrentX() {
         return currentX + 75;
     }
-    
+
     public double getCurrentY() {
         return currentY + 70;
     }
