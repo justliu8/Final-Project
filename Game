@@ -7,6 +7,8 @@ import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
@@ -55,6 +57,20 @@ public class Game
         frame.add(component, BorderLayout.CENTER);
         component.setFocusable(true);
 
+        class RestartGameListener implements ActionListener
+        {
+            public void actionPerformed (ActionEvent event)
+            {
+                final ObjectsComponent component = new ObjectsComponent(frame.getWidth(), frame.getHeight());
+                frame.add(component, BorderLayout.CENTER);
+                component.setFocusable(true);
+            }
+        }
+
+        final JButton button = new JButton ("Restart");
+        final JPanel panel = new JPanel();
+        final ActionListener rListener = new RestartGameListener();
+        
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
@@ -92,6 +108,13 @@ public class Game
                 component.updateSize(width, frame.getHeight());
                 component.updateMouse(mouseX, mouseY);
                 component.repaint();
+
+                if (!component.isGame())
+                {
+                    button.addActionListener (rListener);
+                    panel.add(button);
+                    frame.add(panel);
+                }
             }
         }
 
