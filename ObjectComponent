@@ -57,10 +57,10 @@ public class ObjectsComponent extends JComponent
         time = 0;
         lastShotAngle = 0;
 
-//         difficulty = 2147400000;
-//         for(int i = 1; i <= 20; i++)
-//             user.addXp(1000 * i);//sets the user level to max(for testing)
-//         score = 300000;
+        difficulty = 2147400000;
+        for(int i = 1; i <= 20; i++)
+            user.addXp(1000 * i);//sets the user level to max(for testing)
+        score = 300000;
             
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -457,5 +457,9 @@ public class ObjectsComponent extends JComponent
                 }
             }
         }
+    }
+    
+    public boolean isGame() {
+        return game;
     }
 }
