@@ -12,11 +12,11 @@ public class JackWeng extends EnemyObject implements Boss
 {
     private String name;
 
-    public JackWeng(int fWidth, int fHeight) {
+    public JackWeng(int hp, int fWidth, int fHeight) {
         super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 2);
         name = "Jack Weng";
-        changeMaxHp(45);
-        changeHp(45);
+        changeMaxHp(hp);
+        changeHp(hp);
     }
 
     public void draw(Graphics2D g2) {
