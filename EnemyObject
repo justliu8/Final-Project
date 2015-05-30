@@ -48,9 +48,13 @@ public class EnemyObject extends UserObject
     @param g2 the graphics context
      */
     public void draw(Graphics2D g2) {
-        public void draw(Graphics2D g2) {
         if(super.getMaxHp() > 6)
         {
+            //             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
+            //             g2.setColor(color);
+            //             g2.draw(circle);
+            //             g2.setPaint(color);
+            //             g2.fill(circle);
             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //could be any object, doesn't have to be an ellipse
             Ellipse2D.Double circle2 = new Ellipse2D.Double(currentX - getRadius()/2+70, currentY+60 , 20, 20);
