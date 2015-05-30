@@ -55,7 +55,7 @@ public class Game
 
         JPanel panel = new JPanel();
 
-        final ObjectsComponent component = new ObjectsComponent(width, frame.getHeight());
+        final GameComponent component = new GameComponent(width, frame.getHeight());
         component.setPreferredSize(new Dimension(width, height));
         component.setBounds(0, 0, width, height);
         component.setFocusable(true);
