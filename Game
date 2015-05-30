@@ -21,7 +21,7 @@ import java.awt.geom.Ellipse2D;
 /**
  * This is the game class.
  *
- * @author (Thanatcha Panpairoj)
+ * @author (Thanatcha Panpairoj, Justin Liu)
  * @version (5/20/15)
  */
 
@@ -53,50 +53,58 @@ public class Game
         //         frame.setUndecorated(true);
         //         frame.setShape(new Ellipse2D.Double(0,0, 800, 800));//circle frame?
 
+        JPanel panel = new JPanel();
+
         final ObjectsComponent component = new ObjectsComponent(width, frame.getHeight());
-        frame.add(component, BorderLayout.CENTER);
+        component.setPreferredSize(new Dimension(width, height));
+        component.setBounds(0, 0, width, height);
         component.setFocusable(true);
 
         class RestartGameListener implements ActionListener
         {
-            public void actionPerformed (ActionEvent event)
-            {
-                final ObjectsComponent component = new ObjectsComponent(frame.getWidth(), frame.getHeight());
-                frame.add(component, BorderLayout.CENTER);
-                component.setFocusable(true);
+            public void actionPerformed(ActionEvent event) {
+                component.restart();
             }
         }
 
-        final JButton button = new JButton ("Restart");
-        final JPanel panel = new JPanel();
-        final ActionListener rListener = new RestartGameListener();
+        JButton restartButton = new JButton ("Restart");
+        ActionListener rListener = new RestartGameListener();
+        restartButton.addActionListener(rListener);
+        restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
+        restartButton.setVisible(false);
         
+        panel.setLayout(null);
+        panel.add(restartButton);
+        panel.add(component);
+        frame.add(panel);
+
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
                 mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
 
                 int speedUp = 1;
-                if(space || autospeed)
+                boolean boosting = space || autospeed;
+                if(boosting && component.getUserStamina() > 0)
                     speedUp = 4;
 
                 if (right && up && !left)
-                    component.moveBy(diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
+                    component.moveBy(boosting, diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
                 else if (right && down && !left)
-                    component.moveBy(diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
+                    component.moveBy(boosting, diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
                 else if (left && up && !right)
-                    component.moveBy(-diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
+                    component.moveBy(boosting, -diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
                 else if (left && down && !right)
-                    component.moveBy(-diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
+                    component.moveBy(boosting, -diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
                 else {
                     if (right)
-                        component.moveBy(7 * speedUp, 0);
+                        component.moveBy(boosting, 7 * speedUp, 0);
                     if (left)
-                        component.moveBy(-7 * speedUp, 0);
+                        component.moveBy(boosting, -7 * speedUp, 0);
                     if (up)
-                        component.moveBy(0, -7 * speedUp);
+                        component.moveBy(boosting, 0, -7 * speedUp);
                     if (down)
-                        component.moveBy(0, 7 * speedUp);
+                        component.moveBy(boosting, 0, 7 * speedUp);
                 }
 
                 if(firing || autofire)
@@ -110,11 +118,9 @@ public class Game
                 component.repaint();
 
                 if (!component.isGame())
-                {
-                    button.addActionListener (rListener);
-                    panel.add(button);
-                    frame.add(panel);
-                }
+                    restartButton.setVisible(true); 
+                else
+                    restartButton.setVisible(false);
             }
         }
 
@@ -196,5 +202,17 @@ public class Game
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
         frame.setResizable(false);
+        
+        component.requestFocus();
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 }
