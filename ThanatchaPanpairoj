@@ -11,7 +11,7 @@ import java.awt.Font;
 public class ThanatchaPanpairoj extends EnemyObject implements Boss
 {
     private String name;
-    
+
     public ThanatchaPanpairoj(int hp, int fWidth, int fHeight) {
         super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 2);
         name = "Thanatcha Panpairoj";
@@ -22,13 +22,17 @@ public class ThanatchaPanpairoj extends EnemyObject implements Boss
     public void draw(Graphics2D g2) {
         super.draw(g2);
 
-//         g2.setColor(Color.GREEN);
-//         g2.fillArc((int)(super.getX() - 25), (int)(super.getY() - 25), 2 * getRadius(), 2 * getRadius(), 0, (int)(360 - 360.0 * getHp() / getMaxHp())); 
+        //         g2.setColor(Color.GREEN);
+        //         g2.fillArc((int)(super.getX() - 25), (int)(super.getY() - 25), 2 * getRadius(), 2 * getRadius(), 0, (int)(360 - 360.0 * getHp() / getMaxHp())); 
 
         g2.setColor(Color.BLACK);
         g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 25));
-        g2.drawString("Thanatcha", (int)(super.getX() + 12), (int)(super.getY()) + 65);
-        g2.drawString("Panpairoj", (int)(super.getX() + 12), (int)(super.getY()) + 90);
+
+        int x = (int)super.getX();
+        int y = (int)super.getY();
+        g2.drawString("Thanatcha", x + 12, y + 65);
+        g2.drawString("Panpairoj", x + 12, y + 90);
+        g2.drawString("" + super.getHp(), x + 65, y + 135);
     }
 
     public double getX() {
@@ -38,7 +42,7 @@ public class ThanatchaPanpairoj extends EnemyObject implements Boss
     public double getY() {
         return super.getCurrentY();
     }
-    
+
     public String getName() {
         return name;
     }
