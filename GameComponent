@@ -57,11 +57,11 @@ public class GameComponent extends JComponent
         time = 0;
         lastShotAngle = 0;
 
-//         difficulty = 2147400000;
-//         for(int i = 1; i <= 20; i++)
-//             user.addXp(1000 * i);//sets the user level to max(for testing)
-//         user.changeHp(64);
-//         score = 15000;
+        //         difficulty = 2147400000;
+        //         for(int i = 1; i <= 20; i++)
+        //             user.addXp(1000 * i);//sets the user level to max(for testing)
+        //         user.changeHp(64);
+        //         score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -90,9 +90,9 @@ public class GameComponent extends JComponent
         game = user.getHp() != 0;
 
         try{
+            int userLevel = user.getLevel();
             if(game) {
                 time += 1.0 / 60;
-                int userLevel = user.getLevel();
                 if((int)(time % (11 - userLevel / 2)) == 0 && (int)(time) != previousTCount) {
                     user.changeHp(1 + userLevel / 8);
                     previousTCount = (int)time;
@@ -227,13 +227,20 @@ public class GameComponent extends JComponent
 
             paintStats(g2);
 
-            Rectangle hpBar = new Rectangle(25, 15, (int)(500 * (((double)user.getHp()) / user.getMaxHp())), 30);
+            if(userLevel != 20) {
+                Rectangle xpBar = new Rectangle(25, 11, (int)(600 * (((double)user.getXp()) / user.getMaxXp())), 3);
+                g2.setPaint(new Color(0, 190, 0));
+                g2.fill(xpBar);
+                g2.draw(xpBar);
+            }
+
+            Rectangle hpBar = new Rectangle(25, 15, (int)(600 * (((double)user.getHp()) / user.getMaxHp())), 30);
             g2.setPaint(new Color(210, 0, 0));
             g2.fill(hpBar);
             g2.draw(hpBar);
 
             //Rectangle staminaBar = new Rectangle(25, 60, (int)(500 * (((double)user.getStamina()) / user.getMaxStamina())), 30);
-            Rectangle staminaBar = new Rectangle(25, 46, (int)(500 * (((double)user.getStamina()) / user.getMaxStamina())), 4);
+            Rectangle staminaBar = new Rectangle(25, 46, (int)(600 * (((double)user.getStamina()) / user.getMaxStamina())), 3);
             g2.setPaint(Color.YELLOW);
             g2.fill(staminaBar);
             g2.draw(staminaBar);
@@ -246,7 +253,7 @@ public class GameComponent extends JComponent
 
             //g2.drawString("Stamina: " + user.getStamina() + " / " + user.getMaxStamina(), 30, 85);
 
-            g2.drawString("Level: " + user.getLevel(), fWidth - 123, 40);
+            g2.drawString("Level: " + userLevel, fWidth - 123, 40);
 
             DecimalFormat df = new DecimalFormat("00");
             g2.drawString(df.format((int)time / 60) + ":" + df.format((int)time % 60), fWidth - 100, fHeight - 50);
