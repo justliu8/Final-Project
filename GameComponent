@@ -60,7 +60,8 @@ public class GameComponent extends JComponent
 //         difficulty = 2147400000;
 //         for(int i = 1; i <= 20; i++)
 //             user.addXp(1000 * i);//sets the user level to max(for testing)
-//         score = 300000;
+//         user.changeHp(64);
+//         score = 15000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -132,6 +133,7 @@ public class GameComponent extends JComponent
                             boss.changeHp(-1);
                             userProjectiles.remove(p--);
                             if(boss.getHp() == 0) {
+                                bossShotClock.remove(b);
                                 bosses.remove(b--);
                                 int points = 10 + 20 * (difficulty / 5000000);
                                 updateScore(points);
@@ -196,7 +198,10 @@ public class GameComponent extends JComponent
                 Boss boss = bosses.get(b);
                 boss.draw(g2);
                 if(game) {
-                    bossShoot(b, boss.getX(), boss.getY(), 3);
+                    if(bossShotClock.get(b) < 3)
+                        bossShoot(b, boss.getX(), boss.getY(), 3);
+                    else
+                        bossShotClock.set(b, bossShotClock.get(b) - 1);
                     boss.move();
                 }
             }
@@ -227,7 +232,8 @@ public class GameComponent extends JComponent
             g2.fill(hpBar);
             g2.draw(hpBar);
 
-            Rectangle staminaBar = new Rectangle (25, 60, (int)(500 * (((double)user.getStamina()) / user.getMaxStamina())), 30);
+            //Rectangle staminaBar = new Rectangle(25, 60, (int)(500 * (((double)user.getStamina()) / user.getMaxStamina())), 30);
+            Rectangle staminaBar = new Rectangle(25, 46, (int)(500 * (((double)user.getStamina()) / user.getMaxStamina())), 4);
             g2.setPaint(Color.YELLOW);
             g2.fill(staminaBar);
             g2.draw(staminaBar);
@@ -238,7 +244,7 @@ public class GameComponent extends JComponent
 
             g2.drawString("HP: " + user.getHp() + " / " + user.getMaxHp(), 30, 40);
 
-            g2.drawString("Stamina: " + user.getStamina() + " / " + user.getMaxStamina(), 30, 85);
+            //g2.drawString("Stamina: " + user.getStamina() + " / " + user.getMaxStamina(), 30, 85);
 
             g2.drawString("Level: " + user.getLevel(), fWidth - 123, 40);
 
@@ -251,7 +257,7 @@ public class GameComponent extends JComponent
                     g2.setColor(new Color(colorNum, colorNum, colorNum));
                 }
                 g2.drawString("WASD to move, F or hold mouse to shoot", fWidth / 2 - 225, fHeight / 2 - 70);
-                g2.drawString("V or hold SPACEBAR for quadruple speed. Uses stamina.", fWidth / 2 - 285, fHeight / 2 + 70);
+                g2.drawString("V or hold SPACEBAR for quadruple speed. Uses stamina.", fWidth / 2 - 295, fHeight / 2 + 70);
                 framesToDisplayInstructions--;
             }
         } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
@@ -383,6 +389,15 @@ public class GameComponent extends JComponent
         }
     }
 
+    /**
+     * Shoots projectiles and adjusts the fire rate.
+     * 
+     * @param enemyIndex    the enemy index in the enemies ArrayList 
+     * @param enemyX    the x-coordinate of the enemy
+     * @param enemyY    the y-coordinate of the enemy
+     * @param frameDelay    shoots a projectile every frameDelay frames
+     * @return void
+     */
     public void enemyShoot(int enemyIndex, double enemyX, double enemyY, int frameDelay) {
         int i = (enemyShotClock.get(enemyIndex) + 1) % (frameDelay - (difficulty / 40000000));
         enemyShotClock.set(enemyIndex, new Integer(i));
@@ -391,6 +406,15 @@ public class GameComponent extends JComponent
             enemyProjectiles.add(new ProjectileObject(10, 1, Color.RED, enemyX, enemyY, user.getX(), user.getY(), 5 + difficulty / 400000000));
     }
 
+    /**
+     * Shoots projectiles and adjusts the fire rate.
+     * 
+     * @param bossIndex    the boss index in the boss ArrayList 
+     * @param bossX    the x-coordinate of the boss
+     * @param bossY    the y-coordinate of the boss
+     * @param frameDelay    shoots a projectile every frameDelay frames
+     * @return void
+     */
     public void bossShoot(int bossIndex, double bossX, double bossY, int frameDelay) {
         int i = ((bossShotClock.get(bossIndex) + 1) % frameDelay);
         bossShotClock.set(bossIndex, new Integer(i));
@@ -438,7 +462,7 @@ public class GameComponent extends JComponent
             if((int)(Math.random() * difficulty) > 1200000000 && bosses.size() < 3) {
                 int bossSpawnFrameDelay = 180;
                 if(user.getLevel() == 20)
-                    bossSpawnFrameDelay = 160;
+                    bossSpawnFrameDelay = 155;
 
                 if((int)(Math.random() * bossSpawnFrameDelay) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
                     boolean spawned = false;
@@ -470,7 +494,7 @@ public class GameComponent extends JComponent
                         }
                     }
 
-                    bossShotClock.add(0);
+                    bossShotClock.add(20);
                 }
             }
         }
