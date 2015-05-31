@@ -125,7 +125,7 @@ public class UserObject
     public int getLevel() {
         return level;
     }
-    
+
     public int getStamina()
     {
         return stamina;
@@ -137,13 +137,30 @@ public class UserObject
     }
 
     public void addXp(int dXp) {
-        xp += dXp;
-        if((level < 15 && xp >= 1000) || (level < 20 && xp >= 10000)) {
-            xp = 0;
-            level++;
-            maxHp += 1 + level / 4;
-            maxStamina += 60;
+        if(level < 20) {
+            xp += dXp;
+            if((level < 15 && xp >= 1000) || (level < 19 && xp >= 10000) || xp >= 20000) {
+                level++;
+                xp = 0;
+                maxHp += 1 + level / 4;
+                maxStamina += 60;
+            }
         }
+    }
+
+    public int getXp()
+    {
+        return xp;
+    }
+
+    public int getMaxXp()
+    {
+        if(level < 15)
+            return 1000;
+        else if(level < 19)
+            return 10000;
+        else
+            return 20000;
     }
 
     /**
@@ -168,7 +185,7 @@ public class UserObject
     public void changeMaxHp(double dMaxHp) {
         maxHp += dMaxHp;
     }
-    
+
     public void changeStamina(int dStamina)
     {
         if(stamina >= 0)
@@ -178,7 +195,7 @@ public class UserObject
         if(stamina < 0)
             stamina = 0;
     }
-    
+
     /**
      * Changes user's max stamina by an amount.
      *
