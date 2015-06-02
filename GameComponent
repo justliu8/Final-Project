@@ -57,11 +57,11 @@ public class GameComponent extends JComponent
         time = 0;
         lastShotAngle = 0;
 
-        //         difficulty = 2147400000;
-        //         for(int i = 1; i <= 20; i++)
-        //             user.addXp(1000 * i);//sets the user level to max(for testing)
-        //         user.changeHp(64);
-        //         score = 100000;
+        difficulty = 2147400000;
+        for(int i = 1; i <= 20; i++)
+            user.addXp(1000 * i);//sets the user level to max(for testing)
+        user.changeHp(64);
+        score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -185,7 +185,7 @@ public class GameComponent extends JComponent
                     }
                     for(int b = 0; b < bosses.size(); b++) {
                         Boss boss = bosses.get(b);
-                        if(boss.getName() == "Jack Weng" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
+                        if(boss.getName() == "Thanatcha Panpairoj" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
                             enemyProjectiles.remove(p--);
                             break;
                         }
@@ -229,7 +229,7 @@ public class GameComponent extends JComponent
 
             if(userLevel != 20) {
                 Rectangle xpBar = new Rectangle(25, 11, (int)(600 * (((double)user.getXp()) / user.getMaxXp())), 3);
-                g2.setPaint(new Color(0, 190, 0));
+                g2.setPaint(new Color(0, 191, 255));
                 g2.fill(xpBar);
                 g2.draw(xpBar);
             }
@@ -239,9 +239,9 @@ public class GameComponent extends JComponent
             g2.fill(hpBar);
             g2.draw(hpBar);
 
-            //Rectangle staminaBar = new Rectangle(25, 60, (int)(500 * (((double)user.getStamina()) / user.getMaxStamina())), 30);
+            //Rectangle staminaBar = new Rectangle(25, 60, (int)(600 * (((double)user.getStamina()) / user.getMaxStamina())), 30);
             Rectangle staminaBar = new Rectangle(25, 46, (int)(600 * (((double)user.getStamina()) / user.getMaxStamina())), 3);
-            g2.setPaint(Color.YELLOW);
+            g2.setPaint(new Color(255, 215, 0));
             g2.fill(staminaBar);
             g2.draw(staminaBar);
 
@@ -265,6 +265,7 @@ public class GameComponent extends JComponent
                 }
                 g2.drawString("WASD to move, F or hold mouse to shoot", fWidth / 2 - 225, fHeight / 2 - 70);
                 g2.drawString("V or hold SPACEBAR for quadruple speed. Uses stamina.", fWidth / 2 - 300, fHeight / 2 + 70);
+                g2.drawString("ESC to pause.", fWidth / 2 - 80, fHeight / 2 + 120);
                 framesToDisplayInstructions--;
             }
         } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
@@ -426,7 +427,7 @@ public class GameComponent extends JComponent
         int i = ((bossShotClock.get(bossIndex) + 1) % frameDelay);
         bossShotClock.set(bossIndex, new Integer(i));
 
-        if(bosses.get(bossIndex).getName() == "Thanatcha Panpairoj" && i == 0) {
+        if(bosses.get(bossIndex).getName() == "Jack Weng" && i == 0) {
             lastShotAngle -= 5;
             lastShotAngle %= 360;
             for(int p = 0; p < 6; p++)
@@ -440,6 +441,13 @@ public class GameComponent extends JComponent
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, angle + 10, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, angle - 10, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, angle - 20, speed));
+        } else if (bosses.get(bossIndex).getName() == "James Gosling" && i == 0) {
+            int speed = 5 + difficulty / 400000000;
+            enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
+            enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
+            enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
+            enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
+            enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
         }
     }
 
@@ -469,13 +477,14 @@ public class GameComponent extends JComponent
             if((int)(Math.random() * difficulty) > 1200000000 && bosses.size() < 3) {
                 int bossSpawnFrameDelay = 180;
                 if(user.getLevel() == 20)
-                    bossSpawnFrameDelay = 155;
+                    bossSpawnFrameDelay = 150;
 
                 if((int)(Math.random() * bossSpawnFrameDelay) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
                     boolean spawned = false;
                     boolean JL = false;
                     boolean TP = false;
                     boolean J = false;
+                    boolean JG = false;
 
                     for(int b = 0; b < bosses.size(); b++) {
                         String bossName = bosses.get(b).getName();
@@ -483,20 +492,25 @@ public class GameComponent extends JComponent
                             JL = true;
                         else if (bossName == "Thanatcha Panpairoj") 
                             TP = true;
-                        else
+                        else if (bossName == "Jack Weng")
                             J = true;
+                        else
+                            JG = true;
                     }
 
                     while(!spawned) {
-                        int bossNum = (int)(Math.random() * 3) + 1;
-                        if(bossNum == 1 && !JL) {
+                        int bossNum = (int)(Math.random() * 7) + 1;
+                        if(bossNum <= 2 && !JL) {
                             bosses.add(new JustinLiu(40 + score / 4000, fWidth, fHeight));
                             spawned = true;
-                        } else if(bossNum == 2 && !TP) {
+                        } else if(bossNum <= 4 && !TP) {
                             bosses.add(new ThanatchaPanpairoj(40 + score / 4000, fWidth, fHeight));
                             spawned = true;
-                        } else if(bossNum == 3 && !J) {
+                        } else if(bossNum <= 6 && !J) {
                             bosses.add(new JackWeng(40 + score / 4000, fWidth, fHeight));
+                            spawned = true;
+                        } else if (bossNum == 7 && !JG) {
+                            bosses.add(new JamesGosling(45 + score / 3000, fWidth, fHeight));
                             spawned = true;
                         }
                     }
