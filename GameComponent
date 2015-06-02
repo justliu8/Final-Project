@@ -264,7 +264,7 @@ public class GameComponent extends JComponent
                     g2.setColor(new Color(colorNum, colorNum, colorNum));
                 }
                 g2.drawString("WASD to move, F or hold mouse to shoot", fWidth / 2 - 225, fHeight / 2 - 70);
-                g2.drawString("V or hold SPACEBAR for quadruple speed. Uses stamina.", fWidth / 2 - 295, fHeight / 2 + 70);
+                g2.drawString("V or hold SPACEBAR for quadruple speed. Uses stamina.", fWidth / 2 - 300, fHeight / 2 + 70);
                 framesToDisplayInstructions--;
             }
         } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
