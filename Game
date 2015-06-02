@@ -27,7 +27,7 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false;
+    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false, menu = true, options = false;
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
@@ -66,7 +66,27 @@ public class Game
                 component.restart();
             }
         }
-
+        
+        class StartGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                menu = false;
+            }
+        }
+        
+        class ExitGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        }
+        
+        class OptionsGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                options = true;
+            }
+        }
         final JButton restartButton = new JButton ("Restart");
         ActionListener rListener = new RestartGameListener();
         restartButton.addActionListener(rListener);
