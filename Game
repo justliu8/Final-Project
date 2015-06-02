@@ -67,7 +67,7 @@ public class Game
             }
         }
 
-        JButton restartButton = new JButton ("Restart");
+        final JButton restartButton = new JButton ("Restart");
         ActionListener rListener = new RestartGameListener();
         restartButton.addActionListener(rListener);
         restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
