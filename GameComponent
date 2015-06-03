@@ -61,7 +61,7 @@ public class GameComponent extends JComponent
         for(int i = 1; i <= 20; i++)
             user.addXp(1000 * i);//sets the user level to max(for testing)
         user.changeHp(64);
-        score = 1000000;
+        score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
