@@ -27,7 +27,7 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false;
+    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false, pause = false;
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
@@ -72,7 +72,7 @@ public class Game
         restartButton.addActionListener(rListener);
         restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
         restartButton.setVisible(false);
-        
+
         panel.setLayout(null);
         panel.add(restartButton);
         panel.add(component);
@@ -80,47 +80,49 @@ public class Game
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
-                mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
-                mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
+                if(!pause) {
+                    mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
+                    mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
 
-                int speedUp = 1;
-                boolean boosting = space || autospeed;
-                if(boosting && component.getUserStamina() > 0)
-                    speedUp = 4;
+                    int speedUp = 1;
+                    boolean boosting = space || autospeed;
+                    if(boosting && component.getUserStamina() > 0)
+                        speedUp = 4;
 
-                if (right && up && !left)
-                    component.moveBy(boosting, diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
-                else if (right && down && !left)
-                    component.moveBy(boosting, diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
-                else if (left && up && !right)
-                    component.moveBy(boosting, -diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
-                else if (left && down && !right)
-                    component.moveBy(boosting, -diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
-                else {
-                    if (right)
-                        component.moveBy(boosting, 7 * speedUp, 0);
-                    if (left)
-                        component.moveBy(boosting, -7 * speedUp, 0);
-                    if (up)
-                        component.moveBy(boosting, 0, -7 * speedUp);
-                    if (down)
-                        component.moveBy(boosting, 0, 7 * speedUp);
+                    if (right && up && !left)
+                        component.moveBy(boosting, diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
+                    else if (right && down && !left)
+                        component.moveBy(boosting, diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
+                    else if (left && up && !right)
+                        component.moveBy(boosting, -diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
+                    else if (left && down && !right)
+                        component.moveBy(boosting, -diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
+                    else {
+                        if (right)
+                            component.moveBy(boosting, 7 * speedUp, 0);
+                        if (left)
+                            component.moveBy(boosting, -7 * speedUp, 0);
+                        if (up)
+                            component.moveBy(boosting, 0, -7 * speedUp);
+                        if (down)
+                            component.moveBy(boosting, 0, 7 * speedUp);
+                    }
+
+                    if(firing || autofire)
+                        component.userShoot(mouseX, mouseY, 10);
+
+                    component.spawnEnemy(2, 5, 240);
+
+                    component.updateKeys(left, right, up, down, firing, autofire);
+                    component.updateSize(width, frame.getHeight());
+                    component.updateMouse(mouseX, mouseY);
+                    component.repaint();
+
+                    if (!component.isGame())
+                        restartButton.setVisible(true); 
+                    else
+                        restartButton.setVisible(false);
                 }
-
-                if(firing || autofire)
-                    component.userShoot(mouseX, mouseY, 10);
-
-                component.spawnEnemy(3, 5, 240);
-
-                component.updateKeys(left, right, up, down, firing, autofire);
-                component.updateSize(width, frame.getHeight());
-                component.updateMouse(mouseX, mouseY);
-                component.repaint();
-
-                if (!component.isGame())
-                    restartButton.setVisible(true); 
-                else
-                    restartButton.setVisible(false);
             }
         }
 
@@ -137,6 +139,11 @@ public class Game
                     down = true;
                 else if (e.getKeyCode() == KeyEvent.VK_SPACE)
                     space = true;
+                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                    if(pause)
+                        pause = false;
+                    else
+                        pause = true;
             }
 
             public void keyReleased(KeyEvent e) {
@@ -202,17 +209,9 @@ public class Game
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
         frame.setResizable(false);
-        
+
         component.requestFocus();
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         
     }
 }
