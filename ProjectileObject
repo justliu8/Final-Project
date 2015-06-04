@@ -10,7 +10,7 @@ import java.awt.Color;
  */
 public class ProjectileObject
 {
-    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle, dAmplitude;
+    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle, dAmplitude, maxRange, displacement;
     private int damage, radius, amplitude, amplitudeClock = 0;
     private Ellipse2D projectile;
     private Color color;
@@ -36,6 +36,9 @@ public class ProjectileObject
         finalX = endingX;
         finalY = endingY;
 
+        maxRange = 10000;
+        displacement = 0;
+
         angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
         if(finalX > currentX)
             xSpeed = Math.cos(angle) * speed;
@@ -55,6 +58,27 @@ public class ProjectileObject
         currentX = startingX;
         currentY = startingY;
 
+        maxRange = 10000;
+        displacement = 0;
+
+        angle *= Math.PI / 180;
+
+        xSpeed = Math.cos(angle) * speed;
+        ySpeed = Math.sin(angle) * speed;
+    }
+
+    public ProjectileObject(double maxRange, boolean limitedRange, int radius, int damage, Color color, double startingX, double startingY, double angle, double speed) {
+        this.damage = damage;
+        this.radius = radius;
+        this.color = color;
+
+        currentX = startingX;
+        currentY = startingY;
+
+        if(limitedRange)
+            this.maxRange = maxRange;
+        displacement = 0;
+
         angle *= Math.PI / 180;
 
         xSpeed = Math.cos(angle) * speed;
@@ -72,6 +96,35 @@ public class ProjectileObject
 
         finalX = endingX;
         finalY = endingY;
+
+        maxRange = 10000;
+        displacement = 0;
+
+        angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
+        if(finalX > currentX)
+            xSpeed = Math.cos(angle) * speed;
+        else
+            xSpeed = -Math.cos(angle) * speed;
+        if(finalY > currentY)
+            ySpeed =  Math.sin(angle) * speed;
+        else
+            ySpeed = -Math.sin(angle) * speed;
+    }
+
+    public ProjectileObject(boolean limitedRange, double maxRange, int radius, int damage, Color color, double startingX, double startingY, double endingX, double endingY, double speed) {
+        this.damage = damage;
+        this.radius = radius;
+        this.color = color;
+
+        currentX = startingX;
+        currentY = startingY;
+
+        finalX = endingX;
+        finalY = endingY;
+
+        if(limitedRange)
+            this.maxRange = maxRange;
+        displacement = 0;
 
         angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
         if(finalX > currentX)
@@ -105,6 +158,8 @@ public class ProjectileObject
      *@return void
      */
     public void move() {
+        if(maxRange < 10000)
+            displacement += Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
         currentX += xSpeed;
         currentY += ySpeed;
     }
@@ -150,5 +205,13 @@ public class ProjectileObject
 
     public double getAmplitude() {
         return amplitude;
+    }
+
+    public double getRange() {
+        return maxRange;
+    }
+
+    public double getDisplacement() {
+        return displacement;
     }
 }
