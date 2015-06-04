@@ -186,6 +186,10 @@ public class UserObject
         maxHp += dMaxHp;
     }
 
+    public String getName() {
+        return "User";
+    }
+    
     public void changeStamina(int dStamina)
     {
         if(stamina >= 0)
