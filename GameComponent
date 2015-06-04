@@ -22,7 +22,7 @@ public class GameComponent extends JComponent
     private GridObject grid;
 
     private boolean left, right, up, down, firing, autofire, game;
-    private int fWidth, fHeight, framesToDisplayInstructions, shotClock, enemyClock, previousTCount, score, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed;
+    private int fWidth, fHeight, framesToDisplayInstructions, shotClock, enemyClock, previousTCount, score, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed, shotsFired, shotsHit, shotMode;
     private double mouseX, mouseY, time;
 
     private ArrayList<ProjectileObject> userProjectiles;
@@ -56,6 +56,9 @@ public class GameComponent extends JComponent
         previousTCount = 0;
         time = 0;
         lastShotAngle = 0;
+        shotsFired = 0;
+        shotsHit = 0;
+        shotMode = 0;
 
         difficulty = 2147400000;
         for(int i = 1; i <= 20; i++)
@@ -126,12 +129,14 @@ public class GameComponent extends JComponent
                 double x = projectile.getX();
                 double y = projectile.getY();
 
+                projectile.draw(g2);
                 if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
                     for(int b = 0; b < bosses.size(); b++) {
                         Boss boss = bosses.get(b);
                         if(Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
                             boss.changeHp(-1);
                             userProjectiles.remove(p--);
+                            shotsHit++;
                             if(boss.getHp() == 0) {
                                 int points = 10 + 20 * (difficulty / 5000000);
                                 if(boss.getName().equals("Pinata"))
@@ -150,6 +155,7 @@ public class GameComponent extends JComponent
                         for(int e = 0; e < enemies.size(); e++) {
                             EnemyObject enemy = enemies.get(e);
                             if(Math.pow(enemy.getX() - x, 2) + Math.pow(enemy.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
+                                shotsHit++;
                                 enemies.remove(e);
                                 enemyShotClock.remove(e--);
                                 userProjectiles.remove(p--);
@@ -176,7 +182,10 @@ public class GameComponent extends JComponent
                 if(x >= -20 && x <= fWidth + 20 && y >= -20 && y <= fHeight + 20) {
                     projectile.draw(g2);
                     if(game)
-                        projectile.move();
+                        if(projectile.getAmplitude() != 0)
+                            projectile.move2();
+                        else
+                            projectile.move();
                     projectile.draw(g2);
                     if(game)
                         projectile.move();
@@ -203,6 +212,8 @@ public class GameComponent extends JComponent
                     if(bossShotClock.get(b) < 15)
                         if(boss.getName() == "Jack Weng")
                             bossShoot(b, boss.getX(), boss.getY(), 14);
+                        else if(boss.getName() == "Ms Jaime")
+                            bossShoot(b, boss.getX(), boss.getY(), 2);
                         else
                             bossShoot(b, boss.getX(), boss.getY(), 3);
                     else
@@ -228,6 +239,13 @@ public class GameComponent extends JComponent
                 g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 20));
                 g2.drawString("Enemies destroyed: " + enemiesDestroyed, fWidth / 2 - 120, fHeight / 2 + 110);
                 g2.drawString("Bosses destroyed: " + bossesDestroyed, fWidth / 2 - 120, fHeight / 2 + 140);
+
+                int accuracy = 0;
+                if(shotsFired!= 0 && shotsFired == shotsHit)
+                    accuracy = 100;
+                else if(shotsFired != 0)
+                    accuracy = (int)(shotsHit * 100.0 / shotsFired);
+                g2.drawString("Acuracy: " + accuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
             }
 
             paintStats(g2);
@@ -383,21 +401,40 @@ public class GameComponent extends JComponent
      */
     public void userShoot(double mouseX, double mouseY, int frameDelay) {
         if(game) {
-            frameDelay -= (user.getLevel() - 2) / 2;
-            this.mouseX = mouseX;
-            this.mouseY = mouseY;
-            shotClock++;
-            shotClock %= frameDelay;
-            if(shotClock == 0) {
-                //                 double userX = user.getX();
-                //                 double userY = user.getY();
-                //                 ProjectileObject middleProjectile = new ProjectileObject(Color.GREEN, userX, userY, mouseX, mouseY, 45);
-                //                 double angle = middleProjectile.getAngle() * 180 / Math.PI;
-                //                 userProjectiles.add(middleProjectile);
-                //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle + 15, 45));
-                //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle - 15, 45));
+            if(shotMode == 0) {
+                frameDelay -= (user.getLevel() - 2) / 2;
+                this.mouseX = mouseX;
+                this.mouseY = mouseY;
+                shotClock++;
+                shotClock %= frameDelay;
+                if(shotClock == 0) {
+                    //                 double userX = user.getX();
+                    //                 double userY = user.getY();
+                    //                 ProjectileObject middleProjectile = new ProjectileObject(Color.GREEN, userX, userY, mouseX, mouseY, 45);
+                    //                 double angle = middleProjectile.getAngle() * 180 / Math.PI;
+                    //                 userProjectiles.add(middleProjectile);
+                    //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle + 15, 45));
+                    //                 userProjectiles.add(new ProjectileObject(Color.GREEN, userX, userY, angle - 15, 45));
 
-                userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5));
+                    //                 userProjectiles.add(new ProjectileObject(50, 10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5));
+                    //                 userProjectiles.add(new ProjectileObject(-50, 10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5));
+                    shotsFired++;
+                }
+            } else if(shotMode == 1) {
+                frameDelay -= (user.getLevel() - 2) / 3;
+                this.mouseX = mouseX;
+                this.mouseY = mouseY;
+                shotClock++;
+                shotClock %= frameDelay;
+                if(shotClock == 0) {
+                    ProjectileObject middleProjectile = new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5);
+                    userProjectiles.add(middleProjectile);
+                    double angle = middleProjectile.getAngle() * 180 / Math.PI;
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle + 20, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle - 20, 15 + user.getLevel() * 1.5));
+                    shotsFired += 3;
+                }
             }
         }
     }
@@ -452,16 +489,14 @@ public class GameComponent extends JComponent
             enemyProjectiles.add(middleProjectile);
             double angle = middleProjectile.getAngle() * 180 / Math.PI;
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 12, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 10, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 8, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 6, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 4, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 2, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 2, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 4, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 6, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 8, speed));
-            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 10, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 9.6, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 7.2, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 4.8, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle + 2.4, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 2.4, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 4.8, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 7.2, speed));
+            enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 9.6, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 12, speed));
         } else if (bosses.get(bossIndex).getName() == "James Gosling" && i == 0) {
             int speed = 5 + difficulty / 400000000;
@@ -470,6 +505,9 @@ public class GameComponent extends JComponent
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
+        } else if (bosses.get(bossIndex).getName() == "Ms Jaime" && i == 0) {
+            enemyProjectiles.add(new ProjectileObject(30, 14, 4, new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), bossX, bossY, user.getX(), user.getY(), 10));
+            enemyProjectiles.add(new ProjectileObject(-30, 14, 4, new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), bossX, bossY, user.getX(), user.getY(), 10));
         }
     }
 
@@ -542,12 +580,15 @@ public class GameComponent extends JComponent
                         } else if (bossNum == 8 && !P) {
                             bosses.add(new Pinata(45 + score / 3000, fWidth, fHeight));
                             break;
-                        }else if (bossNum == 9 && !MJ) {
+                        } else if (bossNum == 9 && !MJ) {
                             bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
                             break;
                         } else if (JL && TP && J && JG && P)
                             break;
                     }
+
+                    //                     if(!MJ)
+                    //                         bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
 
                     bossShotClock.add(33);
                 }
@@ -564,6 +605,15 @@ public class GameComponent extends JComponent
         return user.getStamina();
     }
 
+    public void changeShotMode(int mode) {
+        if(user.getLevel() > 9)
+            this.shotMode = mode;
+    }
+
+    public int getShotMode() {
+        return shotMode;
+    }
+
     public void restart() {
         user = new UserObject(25, fWidth / 2, fHeight / 2, Color.BLUE);
         score = 0;
@@ -577,6 +627,9 @@ public class GameComponent extends JComponent
         previousTCount = 0;
         time = 0;
         lastShotAngle = 0;
+        shotsFired = 0;
+        shotsHit = 0;
+        shotMode = 0;
 
         difficulty = 0;
 
