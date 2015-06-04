@@ -564,23 +564,23 @@ public class GameComponent extends JComponent
                     }
 
                     while(true) {
-                        int bossNum = (int)(Math.random() * 9) + 1;
-                        if((bossNum == 1 || bossNum == 2) && !JL) {
+                        int bossNum = (int)(Math.random() * 12) + 1;
+                        if((bossNum == 1 || bossNum == 2 || bossNum == 3) && !JL) {
                             bosses.add(new JustinLiu(40 + score / 4000, fWidth, fHeight));
                             break;
-                        } else if((bossNum == 3 || bossNum == 4) && !TP) {
+                        } else if((bossNum == 4 || bossNum == 5 || bossNum == 6) && !TP) {
                             bosses.add(new ThanatchaPanpairoj(40 + score / 4000, fWidth, fHeight));
                             break;
-                        } else if((bossNum == 5 || bossNum == 6) && !J) {
+                        } else if((bossNum == 7 || bossNum == 8 || bossNum == 9) && !J) {
                             bosses.add(new JackWeng(40 + score / 4000, fWidth, fHeight));
                             break;
-                        } else if (bossNum == 7 && !JG) {
+                        } else if (bossNum == 10 && !JG) {
                             bosses.add(new JamesGosling(45 + score / 3000, fWidth, fHeight));
                             break;
-                        } else if (bossNum == 8 && !P) {
+                        } else if (bossNum == 11 && !P) {
                             bosses.add(new Pinata(45 + score / 3000, fWidth, fHeight));
                             break;
-                        } else if (bossNum == 9 && !MJ) {
+                        } else if (bossNum == 12 && !MJ) {
                             bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
                             break;
                         } else if (JL && TP && J && JG && P)
