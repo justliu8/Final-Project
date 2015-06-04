@@ -10,8 +10,8 @@ import java.awt.Color;
  */
 public class ProjectileObject
 {
-    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle;
-    private int damage, radius;
+    private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle, dAmplitude;
+    private int damage, radius, amplitude, amplitudeClock = 0;
     private Ellipse2D projectile;
     private Color color;
 
@@ -61,6 +61,29 @@ public class ProjectileObject
         ySpeed = Math.sin(angle) * speed;
     }
 
+    public ProjectileObject(int amplitude, int radius, int damage, Color color, double startingX, double startingY, double endingX, double endingY, double speed) {
+        this.amplitude = amplitude;
+        this.damage = damage;
+        this.radius = radius;
+        this.color = color;
+
+        currentX = startingX;
+        currentY = startingY;
+
+        finalX = endingX;
+        finalY = endingY;
+
+        angle = Math.atan(Math.abs(endingY - startingY) / Math.abs(endingX - startingX));
+        if(finalX > currentX)
+            xSpeed = Math.cos(angle) * speed;
+        else
+            xSpeed = -Math.cos(angle) * speed;
+        if(finalY > currentY)
+            ySpeed =  Math.sin(angle) * speed;
+        else
+            ySpeed = -Math.sin(angle) * speed;
+    }
+
     /**
      *Draws a projectile object. 
      *Checks if the projectile is within the frame by comparing current coordinates to fWidth and fHeight.
@@ -86,6 +109,19 @@ public class ProjectileObject
         currentY += ySpeed;
     }
 
+    /**
+     *Moves a projectile object along its path. 
+     *
+     *@return void
+     */
+    public void move2() {
+        amplitudeClock += 1;
+        dAmplitude = amplitude * Math.cos(amplitudeClock * Math.PI / 18);
+        currentX += (dAmplitude) * Math.cos(getAngle() + Math.PI / 2) + xSpeed;
+        currentY += (dAmplitude) * Math.sin(getAngle() + Math.PI / 2) + ySpeed;
+        amplitudeClock += 1;
+    }
+
     public double getX() {
         return currentX;
     }
@@ -95,9 +131,6 @@ public class ProjectileObject
     }
 
     public double getAngle() {
-//         System.out.println("x" + xSpeed);
-//         System.out.println("y" + ySpeed);
-//         System.out.println(angle);
         if(xSpeed > 0 && ySpeed < 0)
             return -angle;
         else if (xSpeed < 0 && ySpeed < 0)
@@ -106,12 +139,16 @@ public class ProjectileObject
             return Math.PI - angle;
         return angle;
     }
-    
+
     public int getDamage() {
         return damage;
     }
-    
+
     public int getRadius() {
         return radius;
+    }
+
+    public double getAmplitude() {
+        return amplitude;
     }
 }
