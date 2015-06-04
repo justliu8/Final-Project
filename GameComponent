@@ -248,6 +248,7 @@ public class GameComponent extends JComponent
                     accuracy = (int)(shotsHit * 100.0 / shotsFired);
                 g2.drawString("Acuracy: " + accuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
 
+                g2.setPaint(new Color(200, 200, 200));
                 if(score < 100000)
                 {
                     g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
@@ -256,7 +257,7 @@ public class GameComponent extends JComponent
                 else if(score < 500000)
                 {
                     g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
-                    g2.drawString("GREAT SCORE" , fWidth/2-290, fHeight/2 - 150);
+                    g2.drawString("GREAT SCORE" , fWidth/2-350, fHeight/2 - 150);
                 }
                 else
                 {
@@ -448,7 +449,7 @@ public class GameComponent extends JComponent
                     shotsFired++;
                 }
             } else if(shotMode == 1) {
-                frameDelay -= (user.getLevel() - 2) / 3 + 1;
+                frameDelay -= (user.getLevel() - 2) / 3 + 2;
                 this.mouseX = mouseX;
                 this.mouseY = mouseY;
                 shotClock++;
@@ -457,8 +458,8 @@ public class GameComponent extends JComponent
                     ProjectileObject middleProjectile = new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5);
                     userProjectiles.add(middleProjectile);
                     double angle = middleProjectile.getAngle() * 180 / Math.PI;
-                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle + 17, 15 + user.getLevel() * 1.5));
-                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle - 17, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle + 18, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle - 18, 15 + user.getLevel() * 1.5));
                     shotsFired += 3;
                 }
             }
