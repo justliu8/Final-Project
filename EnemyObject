@@ -49,7 +49,7 @@ public class EnemyObject extends UserObject
      */
     public void draw(Graphics2D g2) {
         if(this.getName().equals("Pinata")) {
-            Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
+             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //could be any object, doesn't have to be an ellipse
             g2.setColor(color);
             g2.draw(circle);
@@ -63,9 +63,9 @@ public class EnemyObject extends UserObject
             g2.setColor(Color.WHITE);
             //         g2.draw(segment);
             //         g2.draw(segment2);
-            g2.drawArc((int)currentX-super.getRadius()/2-5, (int)currentY-super.getRadius()/2, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
-            g2.drawArc((int)currentX+super.getRadius()/2-5, (int)currentY-super.getRadius()/2, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
-            g2.drawArc((int)currentX-super.getRadius()/2, (int)currentY+super.getRadius()/2-10, (int)super.getRadius(), (int)super.getRadius()/2, 180,180);
+            g2.drawArc((int)currentX-super.getRadius()/2+45, (int)currentY-super.getRadius()/2+70, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
+            g2.drawArc((int)currentX+super.getRadius()/2+45, (int)currentY-super.getRadius()/2+70, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
+            g2.drawArc((int)currentX-super.getRadius()/2+70, (int)currentY+super.getRadius()/2+50, (int)super.getRadius(), (int)super.getRadius()/2, 180,180);
         }else if(super.getMaxHp() > 6) {
             //             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //             g2.setColor(color);
