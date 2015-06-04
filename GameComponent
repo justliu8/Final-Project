@@ -61,11 +61,11 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        //         difficulty = 2147400000;
-        //         for(int i = 1; i <= 20; i++)
-        //             user.addXp(1000 * i);//sets the user level to max(for testing)
-        //         user.changeHp(64);
-        //         score = 100000;
+        difficulty = 2147400000;
+        for(int i = 1; i <= 20; i++)
+            user.addXp(1000 * i);//sets the user level to max(for testing)
+        user.changeHp(64);
+        score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -448,7 +448,7 @@ public class GameComponent extends JComponent
                     shotsFired++;
                 }
             } else if(shotMode == 1) {
-                frameDelay -= (user.getLevel() - 2) / 3;
+                frameDelay -= (user.getLevel() - 2) / 3 + 1;
                 this.mouseX = mouseX;
                 this.mouseY = mouseY;
                 shotClock++;
