@@ -1,6 +1,14 @@
 # Final-Project
 Game
 
+
+update 4:09 6/4/15
+
+updated GameComponent and ProjectileObject to include lightsabers
+
+
+
+
 update 5:38 pm 6/3/15
 
 updated game(mousewheellistener), gamecomponent(new shootingmode), and projectileobject(adjusted waving projectiles)
