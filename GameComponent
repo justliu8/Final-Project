@@ -22,7 +22,7 @@ public class GameComponent extends JComponent
     private GridObject grid;
 
     private boolean left, right, up, down, firing, autofire, game;
-    private int fWidth, fHeight, framesToDisplayInstructions, shotClock, enemyClock, previousTCount, score, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed, shotsFired, shotsHit, shotMode;
+    private int fWidth, fHeight, framesToDisplayInstructions, framesToDisplayShotMode, shotClock, enemyClock, previousTCount, score, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed, shotsFired, shotsHit, shotMode;
     private double mouseX, mouseY, time;
 
     private ArrayList<ProjectileObject> userProjectiles;
@@ -50,6 +50,7 @@ public class GameComponent extends JComponent
         fHeight = frameHeight;
 
         framesToDisplayInstructions = 600;
+        framesToDisplayShotMode = 0;
 
         shotClock = 0;
         enemyClock = 0;
@@ -60,11 +61,11 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        //         difficulty = 2147400000;
-        //         for(int i = 1; i <= 20; i++)
-        //             user.addXp(1000 * i);//sets the user level to max(for testing)
-        //         user.changeHp(64);
-        //         score = 100000;
+//         difficulty = 2147400000;
+//         for(int i = 1; i <= 20; i++)
+//             user.addXp(1000 * i);//sets the user level to max(for testing)
+//         user.changeHp(64);
+//         score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -290,6 +291,13 @@ public class GameComponent extends JComponent
                 g2.drawString("V or hold SPACEBAR for quadruple speed. Uses stamina.", fWidth / 2 - 300, fHeight / 2 + 70);
                 g2.drawString("ESC to pause.", fWidth / 2 - 80, fHeight / 2 + 120);
                 framesToDisplayInstructions--;
+            }
+            if(framesToDisplayShotMode > 0) {
+                if(shotMode == 0)
+                    g2.drawString("Regular shots", fWidth / 2 - 75, fHeight / 2);
+                else if(shotMode == 1)
+                    g2.drawString("3 shots at 50% fire rate", fWidth / 2 - 115, fHeight / 2);
+                framesToDisplayShotMode--;
             }
         } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
@@ -598,6 +606,7 @@ public class GameComponent extends JComponent
     public void changeShotMode(int mode) {
         if(user.getLevel() > 9)
             this.shotMode = mode;
+        framesToDisplayShotMode = 100;
     }
 
     public int getShotMode() {
