@@ -60,11 +60,11 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        difficulty = 2147400000;
-        for(int i = 1; i <= 20; i++)
-            user.addXp(1000 * i);//sets the user level to max(for testing)
-        user.changeHp(64);
-        score = 100000;
+        //         difficulty = 2147400000;
+        //         for(int i = 1; i <= 20; i++)
+        //             user.addXp(1000 * i);//sets the user level to max(for testing)
+        //         user.changeHp(64);
+        //         score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -563,29 +563,19 @@ public class GameComponent extends JComponent
                             MJ = true;
                     }
 
-                    while(true) {
-                        int bossNum = (int)(Math.random() * 12) + 1;
-                        if((bossNum == 1 || bossNum == 2 || bossNum == 3) && !JL) {
-                            bosses.add(new JustinLiu(40 + score / 4000, fWidth, fHeight));
-                            break;
-                        } else if((bossNum == 4 || bossNum == 5 || bossNum == 6) && !TP) {
-                            bosses.add(new ThanatchaPanpairoj(40 + score / 4000, fWidth, fHeight));
-                            break;
-                        } else if((bossNum == 7 || bossNum == 8 || bossNum == 9) && !J) {
-                            bosses.add(new JackWeng(40 + score / 4000, fWidth, fHeight));
-                            break;
-                        } else if (bossNum == 10 && !JG) {
-                            bosses.add(new JamesGosling(45 + score / 3000, fWidth, fHeight));
-                            break;
-                        } else if (bossNum == 11 && !P) {
-                            bosses.add(new Pinata(45 + score / 3000, fWidth, fHeight));
-                            break;
-                        } else if (bossNum == 12 && !MJ) {
-                            bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
-                            break;
-                        } else if (JL && TP && J && JG && P)
-                            break;
-                    }
+                    int bossNum = (int)(Math.random() * 12) + 1;
+                    if((bossNum == 1 || bossNum == 2 || bossNum == 3) && !JL)
+                        bosses.add(new JustinLiu(40 + score / 4000, fWidth, fHeight));
+                    else if((bossNum == 4 || bossNum == 5 || bossNum == 6) && !TP)
+                        bosses.add(new ThanatchaPanpairoj(40 + score / 4000, fWidth, fHeight));
+                    else if((bossNum == 7 || bossNum == 8 || bossNum == 9) && !J)
+                        bosses.add(new JackWeng(40 + score / 4000, fWidth, fHeight));
+                    else if (bossNum == 10 && !JG)
+                        bosses.add(new JamesGosling(45 + score / 3000, fWidth, fHeight));
+                    else if (bossNum == 11 && !P)
+                        bosses.add(new Pinata(45 + score / 3000, fWidth, fHeight));
+                    else if (bossNum == 12 && !MJ)
+                        bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
 
                     //                     if(!MJ)
                     //                         bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
