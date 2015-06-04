@@ -247,6 +247,23 @@ public class GameComponent extends JComponent
                 else if(shotsFired != 0)
                     accuracy = (int)(shotsHit * 100.0 / shotsFired);
                 g2.drawString("Acuracy: " + accuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
+                
+                 
+                if(score<100000)
+                {
+                    g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
+                    g2.drawString("DIDN'T GET FAR, TRY AGAIN?" , fWidth/2-670, fHeight/2 - 150);
+                }
+                else if(score<500000)
+                {
+                     g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
+                  g2.drawString("GREAT SCORE" , fWidth/2-300, fHeight/2 - 150);
+                }
+                else if(score>500000)
+                {
+                    g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
+                   g2.drawString("YOU'RE A GOD" , fWidth/2-350, fHeight/2 - 150);
+                }
             }
 
             paintStats(g2);
