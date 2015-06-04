@@ -61,11 +61,11 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-//         difficulty = 2147400000;
-//         for(int i = 1; i <= 20; i++)
-//             user.addXp(1000 * i);//sets the user level to max(for testing)
-//         user.changeHp(64);
-//         score = 100000;
+        //         difficulty = 2147400000;
+        //         for(int i = 1; i <= 20; i++)
+        //             user.addXp(1000 * i);//sets the user level to max(for testing)
+        //         user.changeHp(64);
+        //         score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -217,8 +217,8 @@ public class GameComponent extends JComponent
                             bossShoot(b, boss.getX(), boss.getY(), 2);
                         else
                             bossShoot(b, boss.getX(), boss.getY(), 3);
-                    else
-                        bossShotClock.set(b, bossShotClock.get(b) - 1);
+                        else
+                            bossShotClock.set(b, bossShotClock.get(b) - 1);
                     boss.move();
                 }
             }
@@ -247,22 +247,21 @@ public class GameComponent extends JComponent
                 else if(shotsFired != 0)
                     accuracy = (int)(shotsHit * 100.0 / shotsFired);
                 g2.drawString("Acuracy: " + accuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
-                
-                 
-                if(score<100000)
+
+                if(score < 100000)
                 {
                     g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
                     g2.drawString("DIDN'T GET FAR, TRY AGAIN?" , fWidth/2-670, fHeight/2 - 150);
                 }
-                else if(score<500000)
-                {
-                     g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
-                  g2.drawString("GREAT SCORE" , fWidth/2-300, fHeight/2 - 150);
-                }
-                else if(score>500000)
+                else if(score < 500000)
                 {
                     g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
-                   g2.drawString("YOU'RE A GOD" , fWidth/2-350, fHeight/2 - 150);
+                    g2.drawString("GREAT SCORE" , fWidth/2-290, fHeight/2 - 150);
+                }
+                else
+                {
+                    g2.setFont (new Font (Font.SANS_SERIF, Font.BOLD, 100));
+                    g2.drawString("YOU'RE A GOD" , fWidth/2-350, fHeight/2 - 150);
                 }
             }
 
@@ -281,7 +280,7 @@ public class GameComponent extends JComponent
             g2.draw(hpBar);
 
             //Rectangle staminaBar = new Rectangle(25, 60, (int)(600 * (((double)user.getStamina()) / user.getMaxStamina())), 30);
-            Rectangle staminaBar = new Rectangle(25, 46, (int)(600 * (((double)user.getStamina()) / user.getMaxStamina())), 3);
+            Rectangle staminaBar = new Rectangle(25, 46, (int)(600 * (((double)user.getStamina()) / user.getMaxStamina())), 4);
             g2.setPaint(new Color(255, 215, 0));
             g2.fill(staminaBar);
             g2.draw(staminaBar);
@@ -310,6 +309,8 @@ public class GameComponent extends JComponent
                 framesToDisplayInstructions--;
             }
             if(framesToDisplayShotMode > 0) {
+                int colorNum = 200 - 2 * framesToDisplayShotMode;
+                g2.setColor(new Color(colorNum, colorNum, colorNum));
                 if(shotMode == 0)
                     g2.drawString("Regular shots", fWidth / 2 - 75, fHeight / 2);
                 else if(shotMode == 1)
@@ -456,8 +457,8 @@ public class GameComponent extends JComponent
                     ProjectileObject middleProjectile = new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5);
                     userProjectiles.add(middleProjectile);
                     double angle = middleProjectile.getAngle() * 180 / Math.PI;
-                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle + 20, 15 + user.getLevel() * 1.5));
-                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle - 20, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle + 17, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle - 17, 15 + user.getLevel() * 1.5));
                     shotsFired += 3;
                 }
             }
