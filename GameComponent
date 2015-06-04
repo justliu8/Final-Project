@@ -62,11 +62,11 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        difficulty = 2147400000;
-        for(int i = 1; i <= 20; i++)
-            user.addXp(1000 * i);//sets the user level to max(for testing)
-        user.changeHp(64);
-        score = 100000;
+//         difficulty = 2147400000;
+//         for(int i = 1; i < 20; i++)
+//             user.addXp(1000 * i);//sets the user level to max(for testing)
+//         user.changeHp(64);
+//         score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -96,9 +96,12 @@ public class GameComponent extends JComponent
 
         try{
             int userLevel = user.getLevel();
-            if(!newShotModeDisplayed && userLevel == 10) {
-                newShotModeDisplayed = true;
-                framesToDisplayNewShotMode = 300;
+            if((!newShotModeDisplayed && userLevel == 10) || (newShotModeDisplayed && userLevel == 20)) {
+                if(userLevel == 10)
+                    newShotModeDisplayed = true;
+                else
+                    newShotModeDisplayed = false;
+                framesToDisplayNewShotMode = 500;
             }
             if(game) {
                 time += 1.0 / 60;
@@ -136,12 +139,14 @@ public class GameComponent extends JComponent
                 double y = projectile.getY();
 
                 projectile.draw(g2);
-                if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight) {
+                if(x >= 0 && x <= fWidth && y >= 0 && y <= fHeight && projectile.getDisplacement() <= projectile.getRange()) {
+                    boolean hit = false;
                     for(int b = 0; b < bosses.size(); b++) {
                         Boss boss = bosses.get(b);
                         if(Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
                             boss.changeHp(-1);
                             userProjectiles.remove(p--);
+                            hit = true;
                             shotsHit++;
                             if(boss.getHp() == 0) {
                                 int points = 10 + 20 * (difficulty / 5000000);
@@ -157,7 +162,7 @@ public class GameComponent extends JComponent
                         }
                     }
 
-                    if(projectile != null) {
+                    if(!hit) {
                         for(int e = 0; e < enemies.size(); e++) {
                             EnemyObject enemy = enemies.get(e);
                             if(Math.pow(enemy.getX() - x, 2) + Math.pow(enemy.getY() - y, 2) < 625) {//25^2 = 625, 25 is the radius of the EnemyObject
@@ -222,8 +227,8 @@ public class GameComponent extends JComponent
                             bossShoot(b, boss.getX(), boss.getY(), 2);
                         else
                             bossShoot(b, boss.getX(), boss.getY(), 3);
-                        else
-                            bossShotClock.set(b, bossShotClock.get(b) - 1);
+                    else
+                        bossShotClock.set(b, bossShotClock.get(b) - 1);
                     boss.move();
                 }
             }
@@ -315,24 +320,23 @@ public class GameComponent extends JComponent
                 framesToDisplayInstructions--;
             }
             if(framesToDisplayShotMode > 0) {
-                int colorNum = 200 - 2 * framesToDisplayShotMode;
+                int colorNum = 210 - framesToDisplayShotMode;
                 g2.setColor(new Color(colorNum, colorNum, colorNum));
                 if(shotMode == 0)
                     g2.drawString("Regular shots", fWidth / 2 - 75, fHeight / 2);
                 else if(shotMode == 1)
                     g2.drawString("3 shots at 50% fire rate", fWidth / 2 - 115, fHeight / 2);
+                else if(shotMode == 2)
+                    g2.drawString("Lightsaber", fWidth / 2 - 60, fHeight / 2);
                 framesToDisplayShotMode--;
             }
             if(framesToDisplayNewShotMode > 0) {
-                int colorNum = 0;
-                if(framesToDisplayNewShotMode <= 210) {
-                    colorNum = 210 - framesToDisplayNewShotMode;
-                    g2.setColor(new Color(colorNum, colorNum, colorNum));
-                }
-                g2.drawString("New firing mode, scroll to switch", fWidth / 2 - 200, fHeight / 2 - 70);
+                g2.setColor(Color.RED);
+                g2.drawString("New firing mode, scroll to switch", fWidth - 400, 75);
                 framesToDisplayNewShotMode--;
             }
-        } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
+        } 
+        catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
         }
     }
@@ -469,13 +473,25 @@ public class GameComponent extends JComponent
                 shotClock++;
                 shotClock %= frameDelay;
                 if(shotClock == 0) {
-                    ProjectileObject middleProjectile = new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5);
+                    ProjectileObject middleProjectile = new ProjectileObject(true, (int)(fWidth / 2), 10, 1, Color.GREEN, user.getX(), user.getY(), mouseX, mouseY, 15 + user.getLevel() * 1.5);
                     userProjectiles.add(middleProjectile);
                     double angle = middleProjectile.getAngle() * 180 / Math.PI;
-                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle + 18, 15 + user.getLevel() * 1.5));
-                    userProjectiles.add(new ProjectileObject(10, 1, Color.GREEN, user.getX(), user.getY(), angle - 18, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject((int)(fWidth / 2), true, 10, 1, Color.GREEN, user.getX(), user.getY(), angle + 18, 15 + user.getLevel() * 1.5));
+                    userProjectiles.add(new ProjectileObject((int)(fWidth / 2), true, 10, 1, Color.GREEN, user.getX(), user.getY(), angle - 18, 15 + user.getLevel() * 1.5));
                     shotsFired += 3;
                 }
+            } else if (shotMode == 2) {
+                frameDelay -= 9;
+                this.mouseX = mouseX;
+                this.mouseY = mouseY;
+                shotClock++;
+                shotClock %= frameDelay;
+                if(shotClock == 0) {
+                    for(int i = 10; i < 31; i++) {
+                        userProjectiles.add(new ProjectileObject(true, 100, 10, 1, new Color(99, 184, 255), user.getX(), user.getY(), mouseX, mouseY, i));
+                        shotsFired++;;
+                    }
+                }   
             }
         }
     }
@@ -554,7 +570,7 @@ public class GameComponent extends JComponent
 
     public void spawnEnemy(int maxBosses, int maxEnemies, int frameDelay) {
         if(game) {
-            maxEnemies += difficulty / 300000000 * 2;
+            maxEnemies += difficulty / 300000000;
             enemyClock++;
             enemyClock %= (frameDelay - (difficulty / 10000000));
             if(enemyClock == 0 && enemies.size() < maxEnemies) {
@@ -637,9 +653,13 @@ public class GameComponent extends JComponent
     }
 
     public void changeShotMode(int mode) {
-        if(user.getLevel() > 9)
-            this.shotMode = mode;
-        framesToDisplayShotMode = 100;
+        if(mode == 1 && user.getLevel() > 9)
+            this.shotMode = 1;
+        else if(mode == 2 && user.getLevel() > 19)
+            this.shotMode = 2;
+        else
+            this.shotMode = 0;
+        framesToDisplayShotMode = 150;
     }
 
     public int getShotMode() {
