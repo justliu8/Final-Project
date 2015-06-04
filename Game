@@ -7,6 +7,8 @@ import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.event.KeyListener;
@@ -192,6 +194,16 @@ public class Game
             public void mouseExited(MouseEvent event) {}
         }
 
+        class ScrollListener implements MouseWheelListener
+        {
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if(component.getShotMode() == 0)
+                    component.changeShotMode(1);
+                    else
+                    component.changeShotMode(0);
+            }
+        }
+
         frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
         ActionListener tListener = new TimeListener();
@@ -201,6 +213,9 @@ public class Game
 
         MouseListener mListener = new MousePressListener();
         component.addMouseListener(mListener);
+
+        MouseWheelListener sListener = new ScrollListener();
+        component.addMouseWheelListener(sListener);
 
         final int DELAY = 1000 / 60;//60 frames per second
         Timer t = new Timer(DELAY, tListener);
@@ -212,6 +227,5 @@ public class Game
 
         component.requestFocus();
 
-        
     }
 }
