@@ -63,9 +63,9 @@ public class EnemyObject extends UserObject
             g2.setColor(Color.WHITE);
             //         g2.draw(segment);
             //         g2.draw(segment2);
-            g2.drawArc((int)currentX-super.getRadius()/2+45, (int)currentY-super.getRadius()/2+70, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
+            g2.drawArc((int)currentX-super.getRadius()/2+55, (int)currentY-super.getRadius()/2+70, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
             g2.drawArc((int)currentX+super.getRadius()/2+45, (int)currentY-super.getRadius()/2+70, (int)super.getRadius()/2-2, (int)super.getRadius()/2-2, 0, 180);
-            g2.drawArc((int)currentX-super.getRadius()/2+70, (int)currentY+super.getRadius()/2+50, (int)super.getRadius(), (int)super.getRadius()/2, 180,180);
+            g2.drawArc((int)currentX-super.getRadius()/2+75, (int)currentY+super.getRadius()/2+50, (int)super.getRadius(), (int)super.getRadius()/2, 180,180);
         }else if(super.getMaxHp() > 6) {
             //             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //             g2.setColor(color);
