@@ -1,6 +1,14 @@
 # Final-Project
 Game
 
+update 5:38 pm 6/3/15
+
+updated game(mousewheellistener), gamecomponent(new shootingmode), and projectileobject(adjusted waving projectiles)
+
+
+
+
+
 
 update 6:28 pm 6/2/15
 
