@@ -21,7 +21,8 @@ import java.awt.Dimension;
 import java.awt.geom.Ellipse2D;
 
 /**
- * This is the game class.
+ * This is the game class. This includes the JFrame, listeners, buttons, and the GameComponent which includes all the objects. 
+ * The main method starts the game and sets everything up. 
  *
  * @author (Thanatcha Panpairoj, Justin Liu)
  * @version (5/20/15)
@@ -29,13 +30,14 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false, pause = false;
+    private static boolean left, right, up, down, firing, space, autofire, autospeed, pause;
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
      * Main method that starts the game. Sets up the FJrame, ObjectsComponent, KeyListener.
-     * MouseListener, and TimerListener. Sets the size to fullscreen and the cursor to a crosshair.
-     * Starts a timer with a 1000/60 millisecond delay so the frame updates 60 times every 1000 millisecond.
+     * MouseListener, and TimerListener, MouseWheelListener. Sets the size to fullscreen and the cursor to a crosshair.
+     * Starts a timer with a 1000/60 millisecond delay. The timer calls the ActionPerformed method every 1000 / 60 of a second.
+     * This updates and repaints the GameComponent which contains all the objects each time.
      * 
      * @param String[] args default parameter for main method
      * @return void
@@ -51,6 +53,16 @@ public class Game
 
         final int width = frame.getWidth();
         final int height = frame.getHeight();
+
+        left = false;
+        right = false;
+        up = false;
+        down = false;
+        firing = false;
+        space = false;
+        autofire = false;
+        autospeed = false;
+        pause = false;
 
         //         frame.setUndecorated(true);
         //         frame.setShape(new Ellipse2D.Double(0,0, 800, 800));//circle frame?
@@ -199,7 +211,7 @@ public class Game
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if(component.getShotMode() == 0)
                     component.changeShotMode(1);
-                    else
+                else
                     component.changeShotMode(0);
             }
         }
