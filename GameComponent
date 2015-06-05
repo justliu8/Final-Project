@@ -64,7 +64,7 @@ public class GameComponent extends JComponent
 
 //         difficulty = 2147400000;
 //         for(int i = 1; i < 20; i++)
-//             user.addXp(1000 * i);//sets the user level to max(for testing)
+//             user.addXp(2000 * i);//sets the user level to max(for testing)
 //         user.changeHp(64);
 //         score = 100000;
 
@@ -96,11 +96,8 @@ public class GameComponent extends JComponent
 
         try{
             int userLevel = user.getLevel();
-            if((!newShotModeDisplayed && userLevel == 10) || (newShotModeDisplayed && userLevel == 20)) {
-                if(userLevel == 10)
-                    newShotModeDisplayed = true;
-                else
-                    newShotModeDisplayed = false;
+            if(!newShotModeDisplayed && userLevel == 10) {
+                newShotModeDisplayed = true;
                 framesToDisplayNewShotMode = 500;
             }
             if(game) {
@@ -189,8 +186,14 @@ public class GameComponent extends JComponent
                 ProjectileObject projectile = enemyProjectiles.get(p);
                 double x = projectile.getX();
                 double y = projectile.getY();
+                boolean blocked = false;
 
-                if(x >= -20 && x <= fWidth + 20 && y >= -20 && y <= fHeight + 20) {
+                if(shotMode == 2)
+                    for(ProjectileObject userProjectile : userProjectiles)
+                        if(Math.abs(userProjectile.getX() - x) < 7 && Math.abs(userProjectile.getY() - y) < 7)
+                            blocked = true;
+
+                if(!blocked && x >= -20 && x <= fWidth + 20 && y >= -20 && y <= fHeight + 20) {
                     projectile.draw(g2);
                     if(game)
                         if(projectile.getAmplitude() != 0)
@@ -214,6 +217,10 @@ public class GameComponent extends JComponent
                     }
                 } else 
                     enemyProjectiles.remove(p--);
+
+                if(blocked) {
+                    userProjectiles.add(new ProjectileObject(projectile.getRadius(), 1, projectile.getColor(), x, y, projectile.getAngle() * 180 / Math.PI + 180, 2 * projectile.getSpeed()));
+                }
             }
 
             for(int b = 0; b < bosses.size(); b++) {
@@ -570,7 +577,7 @@ public class GameComponent extends JComponent
 
     public void spawnEnemy(int maxBosses, int maxEnemies, int frameDelay) {
         if(game) {
-            maxEnemies += difficulty / 300000000;
+            maxEnemies += difficulty / 300000000 * 2;
             enemyClock++;
             enemyClock %= (frameDelay - (difficulty / 10000000));
             if(enemyClock == 0 && enemies.size() < maxEnemies) {
@@ -655,7 +662,7 @@ public class GameComponent extends JComponent
     public void changeShotMode(int mode) {
         if(mode == 1 && user.getLevel() > 9)
             this.shotMode = 1;
-        else if(mode == 2 && user.getLevel() > 19)
+        else if(mode == 2)
             this.shotMode = 2;
         else
             this.shotMode = 0;
