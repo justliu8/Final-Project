@@ -183,6 +183,8 @@ public class Game
                     autospeed = true;
                 else if((c == 'v' || c == 'V') && autospeed)
                     autospeed = false;
+                else if(c == 'l' || c ==a 'L')
+                    component.changeShotMode(2);
             }
         }
 
@@ -211,6 +213,8 @@ public class Game
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if(component.getShotMode() == 0)
                     component.changeShotMode(1);
+                //else if(component.getShotMode() == 1)
+                //    component.changeShotMode(2);
                 else
                     component.changeShotMode(0);
             }
