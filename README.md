@@ -4,7 +4,7 @@ Game
 
 update 4:09 6/4/15
 
-updated GameComponent and ProjectileObject to include lightsabers
+updated Game, GameComponent and ProjectileObject to include lightsabers
 
 
 
