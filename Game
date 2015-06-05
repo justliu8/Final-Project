@@ -183,7 +183,7 @@ public class Game
                     autospeed = true;
                 else if((c == 'v' || c == 'V') && autospeed)
                     autospeed = false;
-                else if(c == 'l' || c ==a 'L')
+                else if(c == 'l' || c == 'L')
                     component.changeShotMode(2);
             }
         }
