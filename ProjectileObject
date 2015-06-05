@@ -214,4 +214,12 @@ public class ProjectileObject
     public double getDisplacement() {
         return displacement;
     }
+    
+    public Color getColor() {
+        return color;
+    }
+    
+    public int getSpeed() {
+        return (int)(Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2)));
+    }
 }
