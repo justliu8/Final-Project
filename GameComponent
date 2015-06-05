@@ -62,11 +62,11 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-//         difficulty = 2147400000;
-//         for(int i = 1; i < 20; i++)
-//             user.addXp(2000 * i);//sets the user level to max(for testing)
-//         user.changeHp(64);
-//         score = 100000;
+        difficulty = 2147400000;
+        for(int i = 1; i < 20; i++)
+            user.addXp(2000 * i);//sets the user level to max(for testing)
+        user.changeHp(64);
+        score = 100000;
 
         //difficulty = 1000000000;
         //difficulty = 0;
@@ -190,7 +190,7 @@ public class GameComponent extends JComponent
 
                 if(shotMode == 2)
                     for(ProjectileObject userProjectile : userProjectiles)
-                        if(Math.abs(userProjectile.getX() - x) < 7 && Math.abs(userProjectile.getY() - y) < 7)
+                        if(userProjectile.getColor().equals(new Color(99, 184, 255)) && Math.abs(userProjectile.getX() - x) < 7 && Math.abs(userProjectile.getY() - y) < 7)
                             blocked = true;
 
                 if(!blocked && x >= -20 && x <= fWidth + 20 && y >= -20 && y <= fHeight + 20) {
