@@ -601,7 +601,9 @@ public class GameComponent extends JComponent
             if((int)(Math.random() * difficulty) > 1200000000 && bosses.size() < maxBosses + score / 100000) {
                 int bossSpawnFrameDelay = 180;
                 if(user.getLevel() == 20)
-                    bossSpawnFrameDelay = 150;
+                    bossSpawnFrameDelay -= 25;
+                if((int)(time / 60) < 150)
+                    bossSpawnFrameDelay -= (int)(time / 60);
 
                 if((int)(Math.random() * bossSpawnFrameDelay) == 0 && (int)(Math.random() * (2147400001 - difficulty) / 100000000) < 2) {
                     boolean JL = false;
