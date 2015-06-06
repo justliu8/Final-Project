@@ -1,3 +1,5 @@
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
@@ -13,12 +15,13 @@ import java.awt.geom.Line2D;
 public class EnemyObject extends UserObject
 {
     private double currentX, currentY, finalX, finalY, xSpeed, ySpeed, angle, speed;
-    private int fWidth, fHeight;
+    private int fWidth, fHeight, userMode;
     private Color color;
 
     public EnemyObject(int radius, int fWidth, int fHeight, int x, int y, Color color, double speed) {
         super(radius, x, y, color);
 
+        this.userMode = userMode;
         this.color = color;
 
         this.fWidth = fWidth;
@@ -48,8 +51,8 @@ public class EnemyObject extends UserObject
     @param g2 the graphics context
      */
     public void draw(Graphics2D g2) {
-        if(this.getName().equals("Pinata")) {
-             Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
+        if(this.getName().equals("Points")) {
+            Ellipse2D.Double circle = new Ellipse2D.Double(currentX - 25, currentY - 25, 2 * super.getRadius(), 2 * super.getRadius());
             //could be any object, doesn't have to be an ellipse
             g2.setColor(color);
             g2.draw(circle);
