@@ -8,13 +8,13 @@ import java.awt.Font;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Pinata extends EnemyObject implements Boss
+public class Points extends EnemyObject implements Boss
 {
     private String name;
 
-    public Pinata(int hp, int fWidth, int fHeight) {
+    public Points(int hp, int fWidth, int fHeight) {
         super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 2);
-        name = "Pinata";
+        name = "points";
         changeMaxHp(hp);
         changeHp(hp);
     }
@@ -30,7 +30,7 @@ public class Pinata extends EnemyObject implements Boss
 
         int x = (int)super.getX();
         int y = (int)super.getY();
-        g2.drawString("Pinata", x + 36, y + 85);
+        g2.drawString("points", x + 37, y + 85);
         g2.drawString("" + super.getHp(), x + 65, y + 135);
     }
 
