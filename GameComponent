@@ -61,8 +61,8 @@ public class GameComponent extends JComponent
         shotsFired = 0;
         shotsHit = 0;
         shotMode = 0;
-
-         difficulty = 2147400000;
+// 
+//         difficulty = 2147400000;
 //         for(int i = 1; i < 20; i++)
 //             user.addXp(2000 * i);//sets the user level to max(for testing)
 //         user.changeHp(64);
@@ -96,6 +96,8 @@ public class GameComponent extends JComponent
 
         try{
             int userLevel = user.getLevel();
+            if(score >= 10000000)
+                changeShotMode(2);
             if(!newShotModeDisplayed && userLevel == 10) {
                 newShotModeDisplayed = true;
                 framesToDisplayNewShotMode = 500;
@@ -297,6 +299,11 @@ public class GameComponent extends JComponent
                 g2.setPaint(new Color(0, 191, 255));
                 g2.fill(xpBar);
                 g2.draw(xpBar);
+            } else if(userLevel == 20 && shotMode != 2) {
+                Rectangle xpBar = new Rectangle(25, 11, (int)(600 * ((score) / 10000000.0)), 3);
+                g2.setPaint(new Color(0, 191, 255));
+                g2.fill(xpBar);
+                g2.draw(xpBar);
             }
 
             Rectangle hpBar = new Rectangle(25, 15, (int)(600 * (((double)user.getHp()) / user.getMaxHp())), 30);
@@ -318,7 +325,10 @@ public class GameComponent extends JComponent
 
             //g2.drawString("Stamina: " + user.getStamina() + " / " + user.getMaxStamina(), 30, 85);
 
-            g2.drawString("Level: " + userLevel, fWidth - 123, 40);
+            if(shotMode == 2)
+                g2.drawString("Level: 21", fWidth - 123, 40);
+            else
+                g2.drawString("Level: " + userLevel, fWidth - 123, 40);
 
             DecimalFormat df = new DecimalFormat("00");
             g2.drawString(df.format((int)time / 60) + ":" + df.format((int)time % 60), fWidth - 100, fHeight - 50);
@@ -662,7 +672,7 @@ public class GameComponent extends JComponent
     public boolean isGame() {
         return game;
     }
-    
+
     public int getScore() {
         return score;
     }
@@ -674,11 +684,11 @@ public class GameComponent extends JComponent
 
     public void changeShotMode(int mode) {
         if(mode == 1 && user.getLevel() > 9)
-            this.shotMode = 1;
+            shotMode = 1;
         else if(mode == 2)
-            this.shotMode = 2;
+            shotMode = 2;
         else
-            this.shotMode = 0;
+            shotMode = 0;
         framesToDisplayShotMode = 150;
     }
 
