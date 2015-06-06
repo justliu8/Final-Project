@@ -14,7 +14,7 @@ public class Points extends EnemyObject implements Boss
 
     public Points(int hp, int fWidth, int fHeight) {
         super(100, fWidth, fHeight, (int)(Math.random() * fWidth), (int)(Math.random() * fHeight), new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 2);
-        name = "points";
+        name = "Points";
         changeMaxHp(hp);
         changeHp(hp);
     }
