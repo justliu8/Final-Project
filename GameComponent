@@ -61,7 +61,7 @@ public class GameComponent extends JComponent
         shotsFired = 0;
         shotsHit = 0;
         shotMode = 0;
-// 
+
 //         difficulty = 2147400000;
 //         for(int i = 1; i < 20; i++)
 //             user.addXp(2000 * i);//sets the user level to max(for testing)
@@ -149,7 +149,7 @@ public class GameComponent extends JComponent
                             shotsHit++;
                             if(boss.getHp() == 0) {
                                 int points = 10 + 20 * (difficulty / 5000000);
-                                if(boss.getName().equals("Pinata"))
+                                if(boss.getName().equals("Points"))
                                     points *= 2;
                                 updateScore(points);
                                 user.addXp(points);
@@ -219,7 +219,7 @@ public class GameComponent extends JComponent
                     }
                     for(int b = 0; b < bosses.size(); b++) {
                         Boss boss = bosses.get(b);
-                        if(boss.getName() == "Pinata" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
+                        if(boss.getName() == "Points" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
                             enemyProjectiles.remove(p--);
                             break;
                         }
@@ -511,8 +511,8 @@ public class GameComponent extends JComponent
                 shotClock++;
                 shotClock %= frameDelay;
                 if(shotClock == 0) {
-                    for(int i = 10; i < 31; i++) {
-                        userProjectiles.add(new ProjectileObject(true, 100, 10, 1, new Color(99, 184, 255), user.getX(), user.getY(), mouseX, mouseY, i));
+                    for(int i = 10; i < 26; i++) {
+                        userProjectiles.add(new ProjectileObject(true, 125, 10, 1, new Color(99, 184, 255), user.getX(), user.getY(), mouseX, mouseY, i));
                         shotsFired++;;
                     }
                 }   
@@ -640,7 +640,7 @@ public class GameComponent extends JComponent
                             J = true;
                         else if (bossName == "James Gosling")
                             JG = true;
-                        else if (bossName == "Pinata")
+                        else if (bossName == "Points")
                             P = true;
                         else if (bossName == "Ms Jaime")
                             MJ = true;
@@ -656,7 +656,7 @@ public class GameComponent extends JComponent
                     else if (bossNum == 10 && !JG)
                         bosses.add(new JamesGosling(45 + score / 3000, fWidth, fHeight));
                     else if (bossNum == 11 && !P)
-                        bosses.add(new Pinata(45 + score / 3000, fWidth, fHeight));
+                        bosses.add(new Points(45 + score / 3000, fWidth, fHeight));
                     else if (bossNum == 12 && !MJ)
                         bosses.add(new MsJaime(45 + score / 3000, fWidth, fHeight));
 
