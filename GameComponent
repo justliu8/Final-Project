@@ -62,14 +62,7 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-//         difficulty = 2147400000;
-//         for(int i = 1; i < 20; i++)
-//             user.addXp(2000 * i);//sets the user level to max(for testing)
-//         user.changeHp(64);
-//         score = 100000;
-
-        //difficulty = 1000000000;
-        //difficulty = 0;
+        difficulty = 0;
 
         userProjectiles = new ArrayList<ProjectileObject>();
         enemyProjectiles = new ArrayList<ProjectileObject>();
@@ -219,7 +212,7 @@ public class GameComponent extends JComponent
                     }
                     for(int b = 0; b < bosses.size(); b++) {
                         Boss boss = bosses.get(b);
-                        if(boss.getName() == "Points" && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
+                        if(boss.getName() .equals("Points") && Math.pow(boss.getX() - x, 2) + Math.pow(boss.getY() - y, 2) < 10000) {//100^2 = 10000, 100 is the radius of the EnemyObject
                             enemyProjectiles.remove(p--);
                             break;
                         }
@@ -237,9 +230,9 @@ public class GameComponent extends JComponent
                 boss.draw(g2);
                 if(game) {
                     if(bossShotClock.get(b) < 15)
-                        if(boss.getName() == "Jack Weng")
+                        if(boss.getName() .equals("Jack Weng"))
                             bossShoot(b, boss.getX(), boss.getY(), 14);
-                        else if(boss.getName() == "Ms Jaime")
+                        else if(boss.getName() .equals("Ms Jaime"))
                             bossShoot(b, boss.getX(), boss.getY(), 2);
                         else
                             bossShoot(b, boss.getX(), boss.getY(), 3);
@@ -550,7 +543,7 @@ public class GameComponent extends JComponent
         int i = ((bossShotClock.get(bossIndex) + 1) % frameDelay);
         bossShotClock.set(bossIndex, new Integer(i));
 
-        if (bosses.get(bossIndex).getName() == "Justin Liu" && i == 0) {
+        if (bosses.get(bossIndex).getName() .equals("Justin Liu") && i == 0) {
             int speed = 5 + difficulty / 400000000;
             ProjectileObject middleProjectile = new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, user.getX(), user.getY(), speed);
             enemyProjectiles.add(middleProjectile);
@@ -559,12 +552,12 @@ public class GameComponent extends JComponent
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, angle + 10, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, angle - 10, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.ORANGE, bossX, bossY, angle - 20, speed));
-        } else if(bosses.get(bossIndex).getName() == "Thanatcha Panpairoj" && i == 0) {
+        } else if(bosses.get(bossIndex).getName() .equals("Thanatcha Panpairoj") && i == 0) {
             lastShotAngle -= 5;
             lastShotAngle %= 360;
             for(int p = 0; p < 6; p++)
                 enemyProjectiles.add(new ProjectileObject(15, 5, new Color(128, 0, 128), bossX, bossY, 360 / 6 * p + lastShotAngle, 5));
-        } else if(bosses.get(bossIndex).getName() == "Jack Weng" && i == 0) {
+        } else if(bosses.get(bossIndex).getName() .equals("Jack Weng") && i == 0) {
             int speed = 2 + difficulty / 600000000;
             ProjectileObject middleProjectile = new ProjectileObject(13, 3, Color.PINK, bossX, bossY, user.getX(), user.getY(), speed);
             enemyProjectiles.add(middleProjectile);
@@ -579,14 +572,14 @@ public class GameComponent extends JComponent
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 7.2, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 9.6, speed));
             enemyProjectiles.add(new ProjectileObject(13, 3, Color.PINK, bossX, bossY, angle - 12, speed));
-        } else if (bosses.get(bossIndex).getName() == "James Gosling" && i == 0) {
+        } else if (bosses.get(bossIndex).getName() .equals("James Gosling") && i == 0) {
             int speed = 5 + difficulty / 400000000;
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
             enemyProjectiles.add(new ProjectileObject(16, 6, Color.BLACK, bossX, bossY, (int)(Math.random() * 360), speed));
-        } else if (bosses.get(bossIndex).getName() == "Ms Jaime" && i == 0) {
+        } else if (bosses.get(bossIndex).getName() .equals("Ms Jaime") && i == 0) {
             enemyProjectiles.add(new ProjectileObject(30, 14, 4, new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), bossX, bossY, user.getX(), user.getY(), 10));
             enemyProjectiles.add(new ProjectileObject(-30, 14, 4, new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), bossX, bossY, user.getX(), user.getY(), 10));
         }
@@ -632,17 +625,17 @@ public class GameComponent extends JComponent
 
                     for(int b = 0; b < bosses.size(); b++) {
                         String bossName = bosses.get(b).getName();
-                        if(bossName == "Justin Liu") 
+                        if(bossName .equals("Justin Liu") )
                             JL = true;
-                        else if (bossName == "Thanatcha Panpairoj") 
+                        else if (bossName .equals("Thanatcha Panpairoj") )
                             TP = true;
-                        else if (bossName == "Jack Weng")
+                        else if (bossName .equals("Jack Weng"))
                             J = true;
-                        else if (bossName == "James Gosling")
+                        else if (bossName .equals("James Gosling"))
                             JG = true;
-                        else if (bossName == "Points")
+                        else if (bossName .equals("Points"))
                             P = true;
-                        else if (bossName == "Ms Jaime")
+                        else if (bossName .equals("Ms Jaime"))
                             MJ = true;
                     }
 
@@ -713,7 +706,16 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        difficulty = 0;
+        
+                difficulty = 2147400000;
+        //         for(int i = 1; i < 20; i++)
+        //             user.addXp(2000 * i);//sets the user level to max(for testing)
+        //         user.changeHp(64);
+        //         score = 100000;
+
+        //difficulty = 1000000000;
+        
+        //difficulty = 0;
 
         userProjectiles = new ArrayList<ProjectileObject>();
         enemyProjectiles = new ArrayList<ProjectileObject>();
