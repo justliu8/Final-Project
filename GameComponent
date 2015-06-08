@@ -267,12 +267,12 @@ public class GameComponent extends JComponent
                 g2.drawString("Enemies destroyed: " + enemiesDestroyed, fWidth / 2 - 120, fHeight / 2 + 110);
                 g2.drawString("Bosses destroyed: " + bossesDestroyed, fWidth / 2 - 120, fHeight / 2 + 140);
 
-                int accuracy = 0;
+                int acuracy = 0;
                 if(shotsFired!= 0 && shotsFired == shotsHit)
-                    accuracy = 100;
+                    acuracy = 100;
                 else if(shotsFired != 0)
-                    accuracy = (int)(shotsHit * 100.0 / shotsFired);
-                g2.drawString("Acuracy: " + accuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
+                    acuracy = (int)(shotsHit * 100.0 / shotsFired);
+                g2.drawString("Acuracy: " + acuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
 
                 g2.setPaint(new Color(200, 200, 200));
                 if(score < 100000)
