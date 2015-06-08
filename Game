@@ -241,21 +241,6 @@ public class Game
                 exitButton.setVisible(false);
 
                 frame.setCursor(toolkit.createCustomCursor(image, new Point(15, 15), "Crosshair"));
-
-                ActionListener tListener = new TimeListener();
-
-                KeyListener kListener = new MotionWithKeyListener();
-                component.addKeyListener(kListener);
-
-                MouseListener mListener = new MousePressListener();
-                component.addMouseListener(mListener);
-
-                MouseWheelListener sListener = new ScrollListener();
-                component.addMouseWheelListener(sListener);
-
-                final int DELAY = 1000 / 60;//60 frames per second
-                Timer t = new Timer(DELAY, tListener);
-                t.start();
             }
         }
 
@@ -291,6 +276,20 @@ public class Game
                 exitButton.setVisible(true);
             }
         }
+
+        ActionListener tListener = new TimeListener();
+        KeyListener kListener = new MotionWithKeyListener();
+        component.addKeyListener(kListener);
+
+        MouseListener mListener = new MousePressListener();
+        component.addMouseListener(mListener);
+
+        MouseWheelListener mwListener = new ScrollListener();
+        component.addMouseWheelListener(mwListener);
+
+        final int DELAY = 1000 / 60;//60 frames per second
+        Timer t = new Timer(DELAY, tListener);
+        t.start();
 
         ActionListener sListener = new StartGameListener();
         startButton.addActionListener(sListener);
