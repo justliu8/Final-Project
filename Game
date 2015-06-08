@@ -88,17 +88,14 @@ public class Game
 
         final JButton restartButton = new JButton ("Restart");
 
-        panel.setLayout(null);
-        panel.add(restartButton);
-        panel.add(component);
-        frame.add(panel);
+        final JButton backToMenuButton = new JButton ("Back to Menu");
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Image image = toolkit.getImage("crosshair.png");
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
-                if(!pause) {
+                if(!pause && !menu) {
                     mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
                     mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
 
@@ -138,12 +135,14 @@ public class Game
 
                     if (!component.isGame()) {
                         restartButton.setVisible(true); 
+                        backToMenuButton.setVisible(true);
                         if(component.getScore() == 0 && !zeroScoreMessageDisplayed) {
                             JOptionPane.showMessageDialog(null, "Unjust life", "0 score", JOptionPane.OK_OPTION);
                             zeroScoreMessageDisplayed = true;
                         }
                     } else {
-                        restartButton.setVisible(false);
+                        restartButton.setVisible(false); 
+                        backToMenuButton.setVisible(false);
                         zeroScoreMessageDisplayed = false;
                     }
                 }
@@ -234,6 +233,7 @@ public class Game
         {
             public void actionPerformed(ActionEvent event) {
                 menu = false;
+                component.restart();
                 component.setVisible(true);
                 component.requestFocus();
 
@@ -280,22 +280,45 @@ public class Game
             }
         }
 
+        class BackToMenuListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                menu = true;
+                component.setVisible(false);
+                restartButton.setVisible(false);
+                backToMenuButton.setVisible(false);
+                startButton.setVisible(true);
+                exitButton.setVisible(true);
+            }
+        }
+
         ActionListener sListener = new StartGameListener();
         startButton.addActionListener(sListener);
         startButton.setBounds(width / 2 - 100, height / 2 - 100, 200, 80);
         startButton.setVisible(true);
-        panel.add(startButton);
 
         ActionListener eListener = new ExitGameListener();
         exitButton.addActionListener(eListener);
         exitButton.setBounds(width / 2 - 100, height / 2, 200, 80);
         exitButton.setVisible(true);
-        panel.add(exitButton);
 
         ActionListener rListener = new RestartGameListener();
         restartButton.addActionListener(rListener);
-        restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
+        restartButton.setBounds(width / 2 - 135, height / 2 - 20, 100, 40);
         restartButton.setVisible(false);
+
+        ActionListener bTMListener = new BackToMenuListener();
+        backToMenuButton.addActionListener(bTMListener);
+        backToMenuButton.setBounds(width / 2 - 15, height / 2 - 20, 150, 40);
+        backToMenuButton.setVisible(false);
+
+        panel.setLayout(null);
+        panel.add(startButton);
+        panel.add(exitButton);
+        panel.add(restartButton);
+        panel.add(backToMenuButton);
+        panel.add(component);
+        frame.add(panel);
 
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
