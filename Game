@@ -33,7 +33,7 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left, right, up, down, firing, space, autofire, autospeed, pause, zeroScoreMessageDisplayed;
+    private static boolean left, right, up, down, firing, space, autofire, autospeed, pause, zeroScoreMessageDisplayed, menu, options;
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
@@ -67,6 +67,8 @@ public class Game
         autospeed = false;
         pause = false;
         zeroScoreMessageDisplayed = false;
+        menu = true;
+        options = false;
 
         //         frame.setUndecorated(true);
         //         frame.setShape(new Ellipse2D.Double(0,0, 800, 800));//circle frame?
@@ -78,24 +80,21 @@ public class Game
         component.setPreferredSize(new Dimension(width, height));
         component.setBounds(0, 0, width, height);
         component.setFocusable(true);
+        component.setVisible(false);
 
-        class RestartGameListener implements ActionListener
-        {
-            public void actionPerformed(ActionEvent event) {
-                component.restart();
-            }
-        }
+        final JButton startButton = new JButton ("Start Game");
+
+        final JButton exitButton = new JButton ("Exit Game");
 
         final JButton restartButton = new JButton ("Restart");
-        ActionListener rListener = new RestartGameListener();
-        restartButton.addActionListener(rListener);
-        restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
-        restartButton.setVisible(false);
 
         panel.setLayout(null);
         panel.add(restartButton);
         panel.add(component);
         frame.add(panel);
+
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Image image = toolkit.getImage("crosshair.png");
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
@@ -231,30 +230,75 @@ public class Game
             }
         }
 
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Image image = toolkit.getImage("crosshair.png");
-        frame.setCursor(toolkit.createCustomCursor(image, new Point(15, 15), "Crosshair"));
+        class StartGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                menu = false;
+                component.setVisible(true);
+                component.requestFocus();
 
-        ActionListener tListener = new TimeListener();
+                startButton.setVisible(false);
+                exitButton.setVisible(false);
 
-        KeyListener kListener = new MotionWithKeyListener();
-        component.addKeyListener(kListener);
+                frame.setCursor(toolkit.createCustomCursor(image, new Point(15, 15), "Crosshair"));
 
-        MouseListener mListener = new MousePressListener();
-        component.addMouseListener(mListener);
+                ActionListener tListener = new TimeListener();
 
-        MouseWheelListener sListener = new ScrollListener();
-        component.addMouseWheelListener(sListener);
+                KeyListener kListener = new MotionWithKeyListener();
+                component.addKeyListener(kListener);
 
-        final int DELAY = 1000 / 60;//60 frames per second
-        Timer t = new Timer(DELAY, tListener);
-        t.start();
+                MouseListener mListener = new MousePressListener();
+                component.addMouseListener(mListener);
+
+                MouseWheelListener sListener = new ScrollListener();
+                component.addMouseWheelListener(sListener);
+
+                final int DELAY = 1000 / 60;//60 frames per second
+                Timer t = new Timer(DELAY, tListener);
+                t.start();
+            }
+        }
+
+        class ExitGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        }
+
+        class OptionsGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                options = true;
+            }
+        }
+
+        class RestartGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                component.restart();
+            }
+        }
+
+        ActionListener sListener = new StartGameListener();
+        startButton.addActionListener(sListener);
+        startButton.setBounds(width / 2 - 100, height / 2 - 100, 200, 80);
+        startButton.setVisible(true);
+        panel.add(startButton);
+
+        ActionListener eListener = new ExitGameListener();
+        exitButton.addActionListener(eListener);
+        exitButton.setBounds(width / 2 - 100, height / 2, 200, 80);
+        exitButton.setVisible(true);
+        panel.add(exitButton);
+
+        ActionListener rListener = new RestartGameListener();
+        restartButton.addActionListener(rListener);
+        restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
+        restartButton.setVisible(false);
 
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
         frame.setResizable(false);
-
-        component.requestFocus();
-
     }
 }
