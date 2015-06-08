@@ -707,7 +707,7 @@ public class GameComponent extends JComponent
         shotMode = 0;
 
         
-                difficulty = 2147400000;
+        //      difficulty = 2147400000;
         //         for(int i = 1; i < 20; i++)
         //             user.addXp(2000 * i);//sets the user level to max(for testing)
         //         user.changeHp(64);
