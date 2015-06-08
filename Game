@@ -2,11 +2,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import java.awt.Point;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.event.KeyListener;
@@ -15,11 +19,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import javax.swing.JOptionPane;
 
 import java.awt.geom.Ellipse2D;
 
 /**
- * This is the game class.
+ * This is the game class. This includes the JFrame, listeners, buttons, and the GameComponent which includes all the objects. 
+ * The main method starts the game and sets everything up. 
  *
  * @author (Thanatcha Panpairoj, Justin Liu)
  * @version (5/20/15)
@@ -27,13 +33,14 @@ import java.awt.geom.Ellipse2D;
 
 public class Game
 {
-    private static boolean left = false, right = false, up = false, down = false, firing = false, space = false, autofire = false, autospeed = false, menu = true, options = false;
+    private static boolean left, right, up, down, firing, space, autofire, autospeed, pause, zeroScoreMessageDisplayed, menu, options;
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
      * Main method that starts the game. Sets up the FJrame, ObjectsComponent, KeyListener.
-     * MouseListener, and TimerListener. Sets the size to fullscreen and the cursor to a crosshair.
-     * Starts a timer with a 1000/60 millisecond delay so the frame updates 60 times every 1000 millisecond.
+     * MouseListener, and TimerListener, MouseWheelListener. Sets the size to fullscreen and the cursor to a crosshair.
+     * Starts a timer with a 1000/60 millisecond delay. The timer calls the ActionPerformed method every 1000 / 60 of a second.
+     * This updates and repaints the GameComponent which contains all the objects each time.
      * 
      * @param String[] args default parameter for main method
      * @return void
@@ -50,15 +57,30 @@ public class Game
         final int width = frame.getWidth();
         final int height = frame.getHeight();
 
+        left = false;
+        right = false;
+        up = false;
+        down = false;
+        firing = false;
+        space = false;
+        autofire = false;
+        autospeed = false;
+        pause = false;
+        zeroScoreMessageDisplayed = false;
+        menu = true;
+        options = false;
+
         //         frame.setUndecorated(true);
         //         frame.setShape(new Ellipse2D.Double(0,0, 800, 800));//circle frame?
 
         JPanel panel = new JPanel();
+        panel.setDoubleBuffered(true);
 
         final GameComponent component = new GameComponent(width, frame.getHeight());
         component.setPreferredSize(new Dimension(width, height));
         component.setBounds(0, 0, width, height);
         component.setFocusable(true);
+        component.setVisible(false);
 
         class RestartGameListener implements ActionListener
         {
@@ -66,81 +88,73 @@ public class Game
                 component.restart();
             }
         }
-        
-        class StartGameListener implements ActionListener
-        {
-            public void actionPerformed(ActionEvent event) {
-                menu = false;
-            }
-        }
-        
-        class ExitGameListener implements ActionListener
-        {
-            public void actionPerformed(ActionEvent event) {
-                System.exit(0);
-            }
-        }
-        
-        class OptionsGameListener implements ActionListener
-        {
-            public void actionPerformed(ActionEvent event) {
-                options = true;
-            }
-        }
+
         final JButton restartButton = new JButton ("Restart");
         ActionListener rListener = new RestartGameListener();
         restartButton.addActionListener(rListener);
         restartButton.setBounds(width / 2 - 50, height / 2 - 20, 100, 40);
         restartButton.setVisible(false);
-        
+
         panel.setLayout(null);
         panel.add(restartButton);
         panel.add(component);
         frame.add(panel);
 
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Image image = toolkit.getImage("crosshair.png");
+        frame.setCursor(toolkit.createCustomCursor(image, new Point(15, 15), "Crosshair"));
+
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
-                mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
-                mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
+                if(!pause) {
+                    mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
+                    mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
 
-                int speedUp = 1;
-                boolean boosting = space || autospeed;
-                if(boosting && component.getUserStamina() > 0)
-                    speedUp = 4;
+                    int speedUp = 1;
+                    boolean boosting = space || autospeed;
+                    if(boosting && component.getUserStamina() > 0)
+                        speedUp = 4;
 
-                if (right && up && !left)
-                    component.moveBy(boosting, diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
-                else if (right && down && !left)
-                    component.moveBy(boosting, diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
-                else if (left && up && !right)
-                    component.moveBy(boosting, -diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
-                else if (left && down && !right)
-                    component.moveBy(boosting, -diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
-                else {
-                    if (right)
-                        component.moveBy(boosting, 7 * speedUp, 0);
-                    if (left)
-                        component.moveBy(boosting, -7 * speedUp, 0);
-                    if (up)
-                        component.moveBy(boosting, 0, -7 * speedUp);
-                    if (down)
-                        component.moveBy(boosting, 0, 7 * speedUp);
+                    if (right && up && !left)
+                        component.moveBy(boosting, diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
+                    else if (right && down && !left)
+                        component.moveBy(boosting, diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
+                    else if (left && up && !right)
+                        component.moveBy(boosting, -diagonalMoveDistance * speedUp, -diagonalMoveDistance * speedUp);
+                    else if (left && down && !right)
+                        component.moveBy(boosting, -diagonalMoveDistance * speedUp, diagonalMoveDistance * speedUp);
+                    else {
+                        if (right)
+                            component.moveBy(boosting, 7 * speedUp, 0);
+                        if (left)
+                            component.moveBy(boosting, -7 * speedUp, 0);
+                        if (up)
+                            component.moveBy(boosting, 0, -7 * speedUp);
+                        if (down)
+                            component.moveBy(boosting, 0, 7 * speedUp);
+                    }
+
+                    if(firing || autofire)
+                        component.userShoot(mouseX, mouseY, 10);
+
+                    component.spawnEnemy(2, 5, 240);
+
+                    component.updateKeys(left, right, up, down, firing, autofire);
+                    component.updateSize(width, frame.getHeight());
+                    component.updateMouse(mouseX, mouseY);
+                    component.repaint();
+
+                    if (!component.isGame()) {
+                        restartButton.setVisible(true); 
+                        if(component.getScore() == 0 && !zeroScoreMessageDisplayed) {
+                            JOptionPane.showMessageDialog(null, "Unjust life", "0 score", JOptionPane.OK_OPTION);
+                            zeroScoreMessageDisplayed = true;
+                        }
+                    } else {
+                        restartButton.setVisible(false);
+                        zeroScoreMessageDisplayed = false;
+                    }
                 }
-
-                if(firing || autofire)
-                    component.userShoot(mouseX, mouseY, 10);
-
-                component.spawnEnemy(3, 5, 240);
-
-                component.updateKeys(left, right, up, down, firing, autofire);
-                component.updateSize(width, frame.getHeight());
-                component.updateMouse(mouseX, mouseY);
-                component.repaint();
-
-                if (!component.isGame())
-                    restartButton.setVisible(true); 
-                else
-                    restartButton.setVisible(false);
             }
         }
 
@@ -157,6 +171,11 @@ public class Game
                     down = true;
                 else if (e.getKeyCode() == KeyEvent.VK_SPACE)
                     space = true;
+                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                    if(pause)
+                        pause = false;
+                    else
+                        pause = true;
             }
 
             public void keyReleased(KeyEvent e) {
@@ -182,6 +201,8 @@ public class Game
                     autospeed = true;
                 else if((c == 'v' || c == 'V') && autospeed)
                     autospeed = false;
+                else if(c == 'l' || c == 'L')
+                    component.changeShotMode(2);
             }
         }
 
@@ -205,34 +226,73 @@ public class Game
             public void mouseExited(MouseEvent event) {}
         }
 
-        frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+        class ScrollListener implements MouseWheelListener
+        {
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if(component.getShotMode() == 0)
+                    component.changeShotMode(1);
+                //else if(component.getShotMode() == 1)
+                //    component.changeShotMode(2);
+                else
+                    component.changeShotMode(0);
+            }
+        }
 
-        ActionListener tListener = new TimeListener();
+        class StartGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                menu = false;
+                component.setVisible(true);
 
-        KeyListener kListener = new MotionWithKeyListener();
-        component.addKeyListener(kListener);
+                ActionListener tListener = new TimeListener();
 
-        MouseListener mListener = new MousePressListener();
-        component.addMouseListener(mListener);
+                KeyListener kListener = new MotionWithKeyListener();
+                component.addKeyListener(kListener);
 
-        final int DELAY = 1000 / 60;//60 frames per second
-        Timer t = new Timer(DELAY, tListener);
-        t.start();
+                MouseListener mListener = new MousePressListener();
+                component.addMouseListener(mListener);
+
+                MouseWheelListener sListener = new ScrollListener();
+                component.addMouseWheelListener(sListener);
+
+                final int DELAY = 1000 / 60;//60 frames per second
+                Timer t = new Timer(DELAY, tListener);
+                t.start();
+            }
+        }
+
+        class ExitGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        }
+
+        class OptionsGameListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent event) {
+                options = true;
+            }
+        }
+
+        final JButton startButton = new JButton ("Start Game");
+        ActionListener sListener = new StartGameListener();
+        startButton.addActionListener(sListener);
+        startButton.setBounds(width / 2 - 100, height / 2 - 100, 200, 80);
+        startButton.setVisible(true);
+        panel.add(startButton);
+
+        final JButton exitButton = new JButton ("Exit Game");
+        ActionListener eListener = new ExitGameListener();
+        exitButton.addActionListener(eListener);
+        exitButton.setBounds(width / 2 - 100, height / 2, 200, 80);
+        exitButton.setVisible(true);
+        panel.add(exitButton);
 
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
         frame.setResizable(false);
-        
+
         component.requestFocus();
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     }
 }
