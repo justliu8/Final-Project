@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 public class GameComponent extends JComponent 
 {
     private UserObject user;
-    private GridObject grid;
 
     private boolean left, right, up, down, firing, autofire, game, newShotModeDisplayed;
     private int fWidth, fHeight, framesToDisplayInstructions, framesToDisplayShotMode, framesToDisplayNewShotMode, shotClock, enemyClock, previousTCount, score, startingDifficulty, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed, shotsFired, shotsHit, shotMode;
@@ -34,7 +33,7 @@ public class GameComponent extends JComponent
 
     /**
      * Initializes user object component. Sets the time to display the control instructions to 10 seconds(600 frames)
-     * Sets up a grid background and creates other game objects.
+     * Sets counters for shooting at 0, creates empty ArrayLists to store projectiles and enemies
      * 
      * @param frameWidth   the width of the frame.
      * @param frameHeight  the height of the frame.
@@ -43,8 +42,6 @@ public class GameComponent extends JComponent
     public GameComponent(int frameWidth, int frameHeight) {
         user = new UserObject(25, frameWidth / 2, frameHeight / 2, Color.BLUE);
         score = 0;
-
-        grid = new GridObject(frameWidth, frameHeight);
 
         fWidth = frameWidth;
         fHeight = frameHeight;
@@ -126,7 +123,6 @@ public class GameComponent extends JComponent
             else if(difficulty < 2147400000)
                 difficulty += 50000;
 
-            grid.draw(g2, fWidth, fHeight);
             for(int e = 0; e < enemies.size(); e++) {
                 EnemyObject enemy = enemies.get(e);
                 enemy.draw(g2);
@@ -173,7 +169,7 @@ public class GameComponent extends JComponent
                                 enemies.remove(e);
                                 enemyShotClock.remove(e--);
                                 userProjectiles.remove(p--);
-                                int points = 10 + (difficulty / 5000000);
+                                int points = 10 + (difficulty / 5000000 * (1 + startingDifficulty / 1000000000));
                                 updateScore(points);
                                 user.addXp(points);
                                 enemiesDestroyed++;
@@ -707,8 +703,6 @@ public class GameComponent extends JComponent
     public void restart() {
         user = new UserObject(25, fWidth / 2, fHeight / 2, Color.BLUE);
         score = 0;
-
-        grid = new GridObject(fWidth, fHeight);
 
         framesToDisplayInstructions = 600;
 
