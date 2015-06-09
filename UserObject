@@ -3,10 +3,11 @@ import java.awt.geom.Ellipse2D;
 import java.awt.Color;
 
 /**
- * Describes user object.
+ * Describes the user object, which is used as a superclass for the enemies and bosses.
+ * Methods to return/change stats (level, xp, hp, max hp, stamina, max stamina, speed, movement, size, location).
  *
  * @author (Thanatcha Panpairoj, Jack Weng)
- * @version (5/19/15)
+ * @version (6/4/15)
  */
 public class UserObject 
 {
@@ -17,8 +18,11 @@ public class UserObject
 
     /**
     Constructs an user object with a given center.
+
+    @param radius the radius of the user object
     @param x the x coordinate of the center
     @param y the y coordinate of the center
+    @param color the color of the user object
      */
     public UserObject(int radius, int x, int y, Color color)
     {
@@ -36,6 +40,7 @@ public class UserObject
     /**
     Draws the object.
     @param g2 the graphics context
+    @return void
      */
     public void draw(Graphics2D g2)
     {
@@ -109,9 +114,9 @@ public class UserObject
     }
 
     /**
-     * Returns hp of user object.
+     * Returns max hp of user object.
      *
-     * @return hp
+     * @return maxHp
      */
     public int getMaxHp() {
         return maxHp;
@@ -126,16 +131,32 @@ public class UserObject
         return level;
     }
 
+    /**
+     * Returns the stamina of the user.
+     *
+     * @return stamina
+     */
     public int getStamina()
     {
         return stamina;
     }
 
+    /**
+     * Returns the maximum stamina of the user.
+     *
+     * @return maxStamina
+     */
     public int getMaxStamina()
     {
         return maxStamina;
     }
 
+    /**
+     * Adds xp to the user. Levels up if enough xp.
+     *
+     * @param dXp change in xp
+     * @return void
+     */
     public void addXp(int dXp) {
         if(level < 20) {
             xp += dXp;
@@ -148,11 +169,21 @@ public class UserObject
         }
     }
 
+    /**
+     * Returns the xp of the user.
+     *
+     * @return xp
+     */
     public int getXp()
     {
         return xp;
     }
 
+    /**
+     * Returns the maximum xp for a level.
+     *
+     * @return maxXp
+     */
     public int getMaxXp()
     {
         if(level < 15)
@@ -167,6 +198,7 @@ public class UserObject
      * Changes user's hp by an amount.
      *
      * @param dHp change in Hp
+     * @return void
      */
     public void changeHp(int dHp) {
         if(hp > 0)
@@ -181,15 +213,27 @@ public class UserObject
      * Changes user's max hp by an amount.
      *
      * @param dMaxHp change in MaxHp
+     * @return void
      */
     public void changeMaxHp(double dMaxHp) {
         maxHp += dMaxHp;
     }
 
+    /**
+     * Returns the name of the user object.
+     *
+     * @return "User"
+     */
     public String getName() {
         return "User";
     }
-    
+
+    /**
+     * Changes user's stamina by an amount.
+     *
+     * @param dStamina change in stamina
+     * @return void
+     */
     public void changeStamina(int dStamina)
     {
         if(stamina >= 0)
@@ -204,6 +248,7 @@ public class UserObject
      * Changes user's max stamina by an amount.
      *
      * @param dMaxStamina change in MaxStamina
+     * @return void
      */
     public void changeMaxStamina(double dMaxStamina) {
         maxStamina += dMaxStamina;
