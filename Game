@@ -76,14 +76,11 @@ public class Game
         JPanel panel = new JPanel();
         panel.setDoubleBuffered(true);
 
-        final GameComponent component = new GameComponent(width, frame.getHeight());
-        component.setPreferredSize(new Dimension(width, height));
-        component.setBounds(0, 0, width, height);
-        component.setFocusable(true);
-        component.setVisible(false);
+        final GameComponent component = new GameComponent(width, height);
+
+        final GridComponent gridComponent = new GridComponent(width, height);
 
         final JButton startButton = new JButton ("Start Game");
-
         final JButton optionsButton = new JButton ("Options");
         final JButton optionsBackToMenuButton = new JButton ("Back to Menu");
 
@@ -106,7 +103,7 @@ public class Game
             public void actionPerformed(ActionEvent e) {
                 if (easyButton.isSelected()) { component.changeStartingDifficulty(0); }
                 else if (mediumButton.isSelected()) { component.changeStartingDifficulty(1100000000); }
-                else if (hardButton.isSelected()) { component.changeStartingDifficulty(2100000000); }
+                else if (hardButton.isSelected()) { component.changeStartingDifficulty(2000000000); }
 
                 if(!pause && !menu && !options) {
                     mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
@@ -311,6 +308,15 @@ public class Game
             }
         }
 
+        component.setPreferredSize(new Dimension(width, height));
+        component.setBounds(0, 0, width, height);
+        component.setFocusable(true);
+        component.setVisible(false);
+
+        gridComponent.setPreferredSize(new Dimension(width, height));
+        gridComponent.setBounds(0, 0, width, height);
+        gridComponent.setVisible(true);
+
         ActionListener tListener = new TimeListener();
         KeyListener kListener = new MotionWithKeyListener();
         component.addKeyListener(kListener);
@@ -345,14 +351,14 @@ public class Game
         exitButton.setVisible(true);
 
         easyButton.setVisible(false);
-        easyButton.setBounds(width / 2 - 100, height / 2 - 150, 200, 80);
+        easyButton.setBounds(width / 2 - 100, height / 2 - 150, 100, 25);
         easyButton.setSelected(true);
 
         mediumButton.setVisible(false);
-        mediumButton.setBounds(width / 2 - 100, height / 2 - 50, 200, 80);
+        mediumButton.setBounds(width / 2 - 100, height / 2 - 50, 100, 25);
 
         hardButton.setVisible(false);
-        hardButton.setBounds(width / 2 - 100, height / 2 + 50, 200, 80);
+        hardButton.setBounds(width / 2 - 100, height / 2 + 50, 100, 25);
 
         ActionListener rListener = new RestartGameListener();
         restartButton.addActionListener(rListener);
@@ -378,11 +384,14 @@ public class Game
         panel.add(exitButton);
         panel.add(restartButton);
         panel.add(backToMenuButton);
+        panel.add(gridComponent);
         panel.add(component);
         frame.add(panel);
 
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
         frame.setResizable(false);
+        
+        gridComponent.repaint();
     }
 }
