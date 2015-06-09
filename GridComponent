@@ -1,6 +1,9 @@
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.Color;
+
+import javax.swing.JComponent;
 
 /**
  * This draws a grid on the frame.
@@ -8,7 +11,7 @@ import java.awt.Color;
  * @author (Thanatcha Panpairoj)
  * @version (5/19/15)
  */
-public class GridObject
+public class GridComponent extends JComponent 
 {
     private int fWidth, fHeight;
 
@@ -19,7 +22,7 @@ public class GridObject
      * @param frameHeight  the height of the frame.
      * 
      */
-    public GridObject(int frameWidth, int frameHeight) {
+    public GridComponent(int frameWidth, int frameHeight) {
         fWidth = frameWidth;
         fHeight = frameHeight;
     }
@@ -32,11 +35,9 @@ public class GridObject
      * @param frameHeight  the height of the frame.
      * @return void
      */
-    public void draw(Graphics2D g2, int frameWidth, int frameHeight)
+    public void paintComponent(Graphics g)
     {
-        fWidth = frameWidth;
-        fHeight = frameHeight;
-        
+        Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.GRAY);
 
         for(int i = 0; i < fHeight; i += 100)
