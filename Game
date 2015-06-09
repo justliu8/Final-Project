@@ -384,14 +384,14 @@ public class Game
         panel.add(exitButton);
         panel.add(restartButton);
         panel.add(backToMenuButton);
-        panel.add(gridComponent);
         panel.add(component);
+        panel.add(gridComponent);
         frame.add(panel);
 
         //frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
         frame.setResizable(false);
-        
+
         gridComponent.repaint();
     }
 }
