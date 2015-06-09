@@ -11,10 +11,10 @@ import javax.swing.JComponent;
 import java.text.DecimalFormat;
 
 /**
- * Draws the user.
+ * Draws the game, which includes the user, enemies, bosses, and projectiles. This will be added onto the frame in the main method of the Game class.
  *
  * @author (Thanatcha Panpairoj, Justin Liu)
- * @version (5/19/15)
+ * @version (6/8/15)
  */
 public class GameComponent extends JComponent 
 {
@@ -32,8 +32,9 @@ public class GameComponent extends JComponent
     private ArrayList<Integer> bossShotClock;
 
     /**
-     * Initializes user object component. Sets the time to display the control instructions to 10 seconds(600 frames)
-     * Sets counters for shooting at 0, creates empty ArrayLists to store projectiles and enemies
+     * Initializes the game component. Sets the time to display the control instructions to 10 seconds (600 frames).
+     * Sets counters for shooting at 0, creates empty ArrayLists to store projectiles and enemies.
+     * Starts the game with a specified difficulty and creates the user object.
      * 
      * @param frameWidth   the width of the frame.
      * @param frameHeight  the height of the frame.
@@ -82,11 +83,12 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Draws all the object component. Including the user, projectiles, and enemies. This paintComponent
+     * Draws all of the game objects, including the user, projectiles, and enemies. This paintComponent
      * method gets called every 1000 / 60 millisecond so it updates 60 times per 1000 millisecond.
+     * It also determines the projectile collisions, and draws the instructions, statistics, and game over state.
      *
-     * @param g Graphics
-     * @return void
+     * @param  g  Graphics
+     * @return    void
      * 
      */
     public void paintComponent(Graphics g)
@@ -267,12 +269,12 @@ public class GameComponent extends JComponent
                 g2.drawString("Enemies destroyed: " + enemiesDestroyed, fWidth / 2 - 120, fHeight / 2 + 110);
                 g2.drawString("Bosses destroyed: " + bossesDestroyed, fWidth / 2 - 120, fHeight / 2 + 140);
 
-                int acuracy = 0;
+                int accuracy = 0;
                 if(shotsFired!= 0 && shotsFired == shotsHit)
-                    acuracy = 100;
+                    accuracy = 100;
                 else if(shotsFired != 0)
-                    acuracy = (int)(shotsHit * 100.0 / shotsFired);
-                g2.drawString("Acuracy: " + acuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
+                    accuracy = (int)(shotsHit * 100.0 / shotsFired);
+                g2.drawString("Accuracy: " + accuracy + "%", fWidth / 2 - 120, fHeight / 2 + 170);
 
                 g2.setPaint(new Color(200, 200, 200));
                 if(score < 100000)
@@ -366,11 +368,12 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Moves user object by an amount. Prevents going off screen.
+     * Moves user object by an amount. Prevents going off screen. Adjusts stamina if user is boosting.
      *
-     * @param dx change in x
-     * @param dy change in y
-     * @return void
+     * @param isSpacebar  boolean for using spacebar to boost
+     * @param dx          change in x
+     * @param dy          change in y
+     * @return            void
      */
     public void moveBy(boolean isSpacebar, double dx, double dy) {
         double newX = user.getX() + dx;
@@ -388,7 +391,7 @@ public class GameComponent extends JComponent
      * 
      * @param mouseX the x coordinate of the mouse
      * @param mouseY the y coordinate of the mouse
-     * @return void
+     * @return       void
      */
     public void updateMouse(double mouseX, double mouseY) {
         this.mouseX = mouseX;
@@ -398,10 +401,10 @@ public class GameComponent extends JComponent
     /**
      * For testing movement keys. Updates which keys are pressed.
      *
-     * @param left boolean indicating if the left arrow key is pressed
-     * @param right boolean indicating if the right arrow key is pressed
-     * @param up boolean indicating if the up arrow key is pressed
-     * @param down boolean indicating if the down arrow key is pressed
+     * @param left   boolean indicating if the left arrow key is pressed
+     * @param right  boolean indicating if the right arrow key is pressed
+     * @param up     boolean indicating if the up arrow key is pressed
+     * @param down   boolean indicating if the down arrow key is pressed
      * @return void
      */
     public void updateKeys(boolean left, boolean right, boolean up, boolean down, boolean firing, boolean autofire) {
@@ -418,7 +421,7 @@ public class GameComponent extends JComponent
      * 
      * @param frameWidth    width of the frame
      * @param frameHeight   height of the frame
-     * @return void
+     * @return              void
      */
     public void updateSize(int frameWidth, int frameHeight) {
         fWidth = frameWidth;
@@ -426,10 +429,10 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Updates the player's socre by dScore amount.
+     * Updates the player's score by dScore amount.
      * 
      * @param dScore the change in score
-     * @return void
+     * @return       void
      */
     public void updateScore(int dScore) {
         score += dScore;
@@ -438,8 +441,8 @@ public class GameComponent extends JComponent
     /**
      * For testing movement and shooting. Displays which keys are pressed and the mouse coordinates.
      * Also displays game info.
-     * @param g2 Graphics context
-     * @return void
+     * @param g2  Graphics context
+     * @return    void
      */
     public void paintStats(Graphics g2) {
         g2.setFont(new Font("TimesRoman", Font.PLAIN, 12)); 
@@ -461,12 +464,12 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Shoots projectiles and adjusts the fire rate.
+     * Shoots user projectiles and adjusts the fire rate.
      * 
-     * @param mouseX    the x-coordinate of the mouse
-     * @param mouseY    the y-coordinate of the mouse
-     * @param frameDelay    shoots a projectile every frameDelay frames
-     * @return void
+     * @param mouseX      the x-coordinate of the mouse
+     * @param mouseY      the y-coordinate of the mouse
+     * @param frameDelay  shoots a projectile every frameDelay frames
+     * @return            void
      */
     public void userShoot(double mouseX, double mouseY, int frameDelay) {
         if(game) {
@@ -521,13 +524,13 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Shoots projectiles and adjusts the fire rate.
+     * Shoots enemy projectiles and adjusts the fire rate.
      * 
-     * @param enemyIndex    the enemy index in the enemies ArrayList 
-     * @param enemyX    the x-coordinate of the enemy
-     * @param enemyY    the y-coordinate of the enemy
-     * @param frameDelay    shoots a projectile every frameDelay frames
-     * @return void
+     * @param enemyIndex   the enemy index in the enemies ArrayList 
+     * @param enemyX       the x-coordinate of the enemy
+     * @param enemyY       the y-coordinate of the enemy
+     * @param frameDelay   shoots a projectile every frameDelay frames
+     * @return             void
      */
     public void enemyShoot(int enemyIndex, double enemyX, double enemyY, int frameDelay) {
         int i = (enemyShotClock.get(enemyIndex) + 1) % (frameDelay - (difficulty / 40000000));
@@ -538,13 +541,13 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Shoots projectiles and adjusts the fire rate.
+     * Shoots boss projectiles and adjusts the fire rate.
      * 
      * @param bossIndex    the boss index in the boss ArrayList 
-     * @param bossX    the x-coordinate of the boss
-     * @param bossY    the y-coordinate of the boss
-     * @param frameDelay    shoots a projectile every frameDelay frames
-     * @return void
+     * @param bossX        the x-coordinate of the boss
+     * @param bossY        the y-coordinate of the boss
+     * @param frameDelay   shoots a projectile every frameDelay frames
+     * @return             void
      */
     public void bossShoot(int bossIndex, double bossX, double bossY, int frameDelay) {
         int i = ((bossShotClock.get(bossIndex) + 1) % frameDelay);
@@ -592,6 +595,14 @@ public class GameComponent extends JComponent
         }
     }
 
+    /**
+     * Spawns a random enemy according to the current difficulty of the game.
+     * 
+     * @param maxBosses    the maximum currently allowed number of bosses
+     * @param maxEnemies   the maximum currently allowed number of enemies
+     * @param frameDelay   number of frames before spawning
+     * @return             void
+     */
     public void spawnEnemy(int maxBosses, int maxEnemies, int frameDelay) {
         if(game) {
             maxEnemies += difficulty / 300000000 * 2;
@@ -669,23 +680,49 @@ public class GameComponent extends JComponent
         }
     }
 
+    /**
+     * Returns whether the game is in progress.
+     * 
+     * @return whether game is on
+     */
     public boolean isGame() {
         return game;
     }
 
+    /**
+     * Returns the current score.
+     * 
+     * @return the current player's score
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Returns the current stamina of the user.
+     * 
+     * @return stamina of user
+     */
     public int getUserStamina()
     {
         return user.getStamina();
     }
 
+    /**
+     * Returns the current shot mode of the user.
+     * 
+     * @return user's shooting mode
+     */
     public int getShotMode() {
         return shotMode;
     }
 
+    /**
+     * Changes to different shooting modes. Also sets the number of frames to display the shot mode.
+     * 
+     * @param mode   the mode to change to
+     * @return       void
+     */
     public void changeShotMode(int mode) {
         if(mode == 1 && user.getLevel() > 9)
             shotMode = 1;
@@ -696,10 +733,22 @@ public class GameComponent extends JComponent
         framesToDisplayShotMode = 150;
     }
 
+    /**
+     * Changes the starting difficulty of the game.
+     * 
+     * @param startingDifficulty   the starting difficulty to be used in the game
+     * @return                     void
+     */
     public void changeStartingDifficulty(int startingDifficulty) {
         this.startingDifficulty = startingDifficulty;
     }
 
+    /**
+     * Restarts the game. This creates a new user object and brand new ArrayLists for the enemies and projectiles.
+     * Sets statistics back to zero, and redisplays the instructions.
+     * 
+     * @return void
+     */
     public void restart() {
         user = new UserObject(25, fWidth / 2, fHeight / 2, Color.BLUE);
         score = 0;
