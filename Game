@@ -1,7 +1,10 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JOptionPane;
 
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 import java.awt.Point;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -19,9 +22,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import javax.swing.JOptionPane;
-
-import java.awt.geom.Ellipse2D;
 
 /**
  * This is the game class. This includes the JFrame, listeners, buttons, and the GameComponent which includes all the objects. 
@@ -84,18 +84,31 @@ public class Game
 
         final JButton startButton = new JButton ("Start Game");
 
+        final JButton optionsButton = new JButton ("Options");
+        final JButton optionsBackToMenuButton = new JButton ("Back to Menu");
+
         final JButton exitButton = new JButton ("Exit Game");
 
         final JButton restartButton = new JButton ("Restart");
 
         final JButton backToMenuButton = new JButton ("Back to Menu");
 
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Image image = toolkit.getImage("crosshair.png");
+        final JRadioButton easyButton = new JRadioButton("Easy");
+        final JRadioButton mediumButton = new JRadioButton("Medium");
+        final JRadioButton hardButton = new JRadioButton("Hard");
+
+        final ButtonGroup group = new ButtonGroup();
+
+        final Toolkit toolkit = Toolkit.getDefaultToolkit();
+        final Image image = toolkit.getImage("crosshair.png");
 
         class TimeListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
-                if(!pause && !menu) {
+                if (easyButton.isSelected()) { component.changeStartingDifficulty(0); }
+                else if (mediumButton.isSelected()) { component.changeStartingDifficulty(1100000000); }
+                else if (hardButton.isSelected()) { component.changeStartingDifficulty(2100000000); }
+
+                if(!pause && !menu && !options) {
                     mouseX = MouseInfo.getPointerInfo().getLocation().getX() - frame.getLocation().getX() - 3;
                     mouseY = MouseInfo.getPointerInfo().getLocation().getY() - frame.getLocation().getY() - 25;
 
@@ -238,6 +251,7 @@ public class Game
                 component.requestFocus();
 
                 startButton.setVisible(false);
+                optionsButton.setVisible(false);
                 exitButton.setVisible(false);
 
                 frame.setCursor(toolkit.createCustomCursor(image, new Point(15, 15), "Crosshair"));
@@ -255,6 +269,16 @@ public class Game
         {
             public void actionPerformed(ActionEvent event) {
                 options = true;
+                menu = false;
+                startButton.setVisible(false);
+                optionsButton.setVisible(false);
+                exitButton.setVisible(false);
+                optionsBackToMenuButton.setVisible(true);
+                easyButton.setVisible(true);
+                mediumButton.setVisible(true);
+                hardButton.setVisible(true);
+                restartButton.setVisible(false);
+                backToMenuButton.setVisible(false);
             }
         }
 
@@ -269,11 +293,21 @@ public class Game
         {
             public void actionPerformed(ActionEvent event) {
                 menu = true;
+                options = false;
                 component.setVisible(false);
                 restartButton.setVisible(false);
                 backToMenuButton.setVisible(false);
                 startButton.setVisible(true);
+                optionsButton.setVisible(true);
+                optionsBackToMenuButton.setVisible(false);
+                easyButton.setVisible(false);
+                mediumButton.setVisible(false);
+                hardButton.setVisible(false);
                 exitButton.setVisible(true);
+                easyButton.setVisible(false);
+                mediumButton.setVisible(false);
+                hardButton.setVisible(false);
+                frame.setCursor(Cursor.getDefaultCursor());
             }
         }
 
@@ -293,13 +327,32 @@ public class Game
 
         ActionListener sListener = new StartGameListener();
         startButton.addActionListener(sListener);
-        startButton.setBounds(width / 2 - 100, height / 2 - 100, 200, 80);
+        startButton.setBounds(width / 2 - 100, height / 2 - 150, 200, 80);
         startButton.setVisible(true);
+
+        ActionListener oListener = new OptionsGameListener();
+        optionsButton.addActionListener(oListener);
+        optionsButton.setBounds(width / 2 - 100, height / 2 - 50, 200, 80);
+        optionsButton.setVisible(true);
+        ActionListener oBTMListener = new BackToMenuListener();
+        optionsBackToMenuButton.addActionListener(oBTMListener);
+        optionsBackToMenuButton.setBounds(50, 50, 150, 40);
+        optionsBackToMenuButton.setVisible(false);
 
         ActionListener eListener = new ExitGameListener();
         exitButton.addActionListener(eListener);
-        exitButton.setBounds(width / 2 - 100, height / 2, 200, 80);
+        exitButton.setBounds(width / 2 - 100, height / 2 + 50, 200, 80);
         exitButton.setVisible(true);
+
+        easyButton.setVisible(false);
+        easyButton.setBounds(width / 2 - 100, height / 2 - 150, 200, 80);
+        easyButton.setSelected(true);
+
+        mediumButton.setVisible(false);
+        mediumButton.setBounds(width / 2 - 100, height / 2 - 50, 200, 80);
+
+        hardButton.setVisible(false);
+        hardButton.setBounds(width / 2 - 100, height / 2 + 50, 200, 80);
 
         ActionListener rListener = new RestartGameListener();
         restartButton.addActionListener(rListener);
@@ -311,8 +364,17 @@ public class Game
         backToMenuButton.setBounds(width / 2 - 15, height / 2 - 20, 150, 40);
         backToMenuButton.setVisible(false);
 
+        group.add(easyButton);
+        group.add(mediumButton);
+        group.add(hardButton); 
+
         panel.setLayout(null);
         panel.add(startButton);
+        panel.add(optionsButton);
+        panel.add(optionsBackToMenuButton);
+        panel.add(easyButton);
+        panel.add(mediumButton);
+        panel.add(hardButton);
         panel.add(exitButton);
         panel.add(restartButton);
         panel.add(backToMenuButton);
