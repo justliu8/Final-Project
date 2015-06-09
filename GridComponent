@@ -6,10 +6,10 @@ import java.awt.Color;
 import javax.swing.JComponent;
 
 /**
- * This draws a grid on the frame.
+ * This draws a background grid on the frame.
  *
  * @author (Thanatcha Panpairoj)
- * @version (5/19/15)
+ * @version (6/8/15)
  */
 public class GridComponent extends JComponent 
 {
@@ -28,12 +28,10 @@ public class GridComponent extends JComponent
     }
 
     /**
-     * Draws the grid. Number of lines drawn depends on the frame width and frame height.
+     * Draws the grid. Each box is 100x100 pixels. Number of lines drawn depends on the frame width and frame height. 
      *
-     * @param g   Graphics
-     * @param frameWidth   the width of the frame.
-     * @param frameHeight  the height of the frame.
-     * @return void
+     * @param  g  Graphics
+     * @return    void
      */
     public void paintComponent(Graphics g)
     {
