@@ -22,7 +22,7 @@ public class GameComponent extends JComponent
     private GridObject grid;
 
     private boolean left, right, up, down, firing, autofire, game, newShotModeDisplayed;
-    private int fWidth, fHeight, framesToDisplayInstructions, framesToDisplayShotMode, framesToDisplayNewShotMode, shotClock, enemyClock, previousTCount, score, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed, shotsFired, shotsHit, shotMode;
+    private int fWidth, fHeight, framesToDisplayInstructions, framesToDisplayShotMode, framesToDisplayNewShotMode, shotClock, enemyClock, previousTCount, score, startingDifficulty, difficulty, lastShotAngle, enemiesDestroyed, bossesDestroyed, shotsFired, shotsHit, shotMode;
     private double mouseX, mouseY, time;
 
     private ArrayList<ProjectileObject> userProjectiles;
@@ -62,7 +62,17 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        difficulty = 0;
+        //         startingDifficulty = 2147400000;
+        //         for(int i = 1; i < 20; i++)
+        //             user.addXp(2000 * i);//sets the user level to max(for testing)
+        //         user.changeHp(64);
+        //         score = 100000;
+        // 
+        //         startingDifficulty = 1000000000;
+
+        startingDifficulty = 0;
+
+        difficulty = startingDifficulty;
 
         userProjectiles = new ArrayList<ProjectileObject>();
         enemyProjectiles = new ArrayList<ProjectileObject>();
@@ -80,6 +90,7 @@ public class GameComponent extends JComponent
      *
      * @param g Graphics
      * @return void
+     * 
      */
     public void paintComponent(Graphics g)
     {
@@ -193,7 +204,7 @@ public class GameComponent extends JComponent
                             reflectedAngle = lightsaberAngle - 180 + lightsaberAngle - (projectile.getAngle() * 180 / Math.PI + 180);
                             if(userProjectile.getDisplacement() > 85)
                                 reflectedAngle = projectile.getAngle() * 180 / Math.PI + 180;
-                        }
+                }
 
                 if(!blocked && x >= -20 && x <= fWidth + 20 && y >= -20 && y <= fHeight + 20) {
                     projectile.draw(g2);
@@ -236,8 +247,8 @@ public class GameComponent extends JComponent
                             bossShoot(b, boss.getX(), boss.getY(), 2);
                         else
                             bossShoot(b, boss.getX(), boss.getY(), 3);
-                    else
-                        bossShotClock.set(b, bossShotClock.get(b) - 1);
+                        else
+                            bossShotClock.set(b, bossShotClock.get(b) - 1);
                     boss.move();
                 }
             }
@@ -419,7 +430,7 @@ public class GameComponent extends JComponent
     }
 
     /**
-     * Updates the player's socre.
+     * Updates the player's socre by dScore amount.
      * 
      * @param dScore the change in score
      * @return void
@@ -505,7 +516,7 @@ public class GameComponent extends JComponent
                 shotClock %= frameDelay;
                 if(shotClock == 0) {
                     for(int i = 10; i < 26; i++) {
-                        userProjectiles.add(new ProjectileObject(true, 125, 10, 1, new Color(99, 184, 255), user.getX(), user.getY(), mouseX, mouseY, i));
+                        userProjectiles.add(new ProjectileObject(true, 120, 10, 1, new Color(99, 184, 255), user.getX(), user.getY(), mouseX, mouseY, i));
                         shotsFired++;;
                     }
                 }   
@@ -675,6 +686,10 @@ public class GameComponent extends JComponent
         return user.getStamina();
     }
 
+    public int getShotMode() {
+        return shotMode;
+    }
+
     public void changeShotMode(int mode) {
         if(mode == 1 && user.getLevel() > 9)
             shotMode = 1;
@@ -685,8 +700,8 @@ public class GameComponent extends JComponent
         framesToDisplayShotMode = 150;
     }
 
-    public int getShotMode() {
-        return shotMode;
+    public void changeStartingDifficulty(int startingDifficulty) {
+        this.startingDifficulty = startingDifficulty;
     }
 
     public void restart() {
@@ -706,16 +721,7 @@ public class GameComponent extends JComponent
         shotsHit = 0;
         shotMode = 0;
 
-        
-        //      difficulty = 2147400000;
-        //         for(int i = 1; i < 20; i++)
-        //             user.addXp(2000 * i);//sets the user level to max(for testing)
-        //         user.changeHp(64);
-        //         score = 100000;
-
-        //difficulty = 1000000000;
-        
-        //difficulty = 0;
+        difficulty = startingDifficulty;
 
         userProjectiles = new ArrayList<ProjectileObject>();
         enemyProjectiles = new ArrayList<ProjectileObject>();
