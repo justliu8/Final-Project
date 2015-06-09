@@ -24,11 +24,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 /**
- * This is the game class. This includes the JFrame, listeners, buttons, and the GameComponent which includes all the objects. 
+ * This is the game class. This includes the JFrame, listeners, buttons, and the GameComponent which includes all the objects. The buttons and the components are all added to a panel, which is added to the frame.
  * The main method starts the game and sets everything up. 
  *
  * @author (Thanatcha Panpairoj, Justin Liu)
- * @version (5/20/15)
+ * @version (6/8/15)
  */
 
 public class Game
@@ -37,13 +37,14 @@ public class Game
     private static double diagonalMoveDistance = 7 / Math.sqrt(2), mouseX, mouseY;
 
     /**
-     * Main method that starts the game. Sets up the FJrame, ObjectsComponent, KeyListener.
-     * MouseListener, and TimerListener, MouseWheelListener. Sets the size to fullscreen and the cursor to a crosshair.
+     * Main method that starts the game. Sets up the JFrame, GameComponent, GridComponent, buttons, and listeners.
+     * Sets the size to fullscreen and the cursor to a crosshair.
      * Starts a timer with a 1000/60 millisecond delay. The timer calls the ActionPerformed method every 1000 / 60 of a second.
      * This updates and repaints the GameComponent which contains all the objects each time.
+     * Checks to see if the game has ended and offers to restart. Can also pause the game.
      * 
-     * @param String[] args default parameter for main method
-     * @return void
+     * @param  args  default parameter for main method
+     * @return       void
      */
     public static void main(String[] args)
     {
@@ -100,6 +101,14 @@ public class Game
         final Image image = toolkit.getImage("crosshair.png");
 
         class TimeListener implements ActionListener {
+            /**
+             * Updates information for the game at a constant rate.
+             * This includes:
+             * Starting difficulty, menus of the game, pause state, mouse location, user controls, enemies, frame, and button visibility.
+             * 
+             * @param  e  Used by the timer.
+             * @return    void
+             */
             public void actionPerformed(ActionEvent e) {
                 if (easyButton.isSelected()) { component.changeStartingDifficulty(0); }
                 else if (mediumButton.isSelected()) { component.changeStartingDifficulty(1100000000); }
@@ -160,6 +169,12 @@ public class Game
         }
 
         class MotionWithKeyListener implements KeyListener {
+            /**
+             * Updates which keys are currently pressed.
+             * 
+             * @param  e  key pressed on the keyboard
+             * @return    void
+             */
             public void keyPressed(KeyEvent e)
             {
                 if (e.getKeyCode() == KeyEvent.VK_A)
@@ -179,6 +194,12 @@ public class Game
                         pause = true;
             }
 
+            /**
+             * Updates when a key is released.
+             * 
+             * @param  e  key released from the keyboard
+             * @return    void
+             */
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_A)
                     left = false;
@@ -192,6 +213,12 @@ public class Game
                     space = false;
             }
 
+            /**
+             * Updates when a key is typed.
+             * 
+             * @param  e  key typed on the keyboard
+             * @return    void
+             */
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
                 if ((c == 'f' || c == 'F') && !autofire)
@@ -209,15 +236,33 @@ public class Game
 
         class MousePressListener implements MouseListener
         {
+            /**
+             * Updates when the mouse button is pressed.
+             * 
+             * @param  event  mouse button press
+             * @return        void
+             */
             public void mousePressed(MouseEvent event)
             {
                 firing = true;
             }
 
+            /**
+             * Updates when the mouse button is released.
+             * 
+             * @param  event  mouse button is released
+             * @return        void
+             */
             public void mouseReleased(MouseEvent event) {
                 firing = false;
             }
 
+            /**
+             * Updates when the mouse button is pressed and released, as a "click."
+             * 
+             * @param  event  mouse button is clicked
+             * @return        void
+             */
             public void mouseClicked(MouseEvent event) {
                 component.userShoot(mouseX, mouseY, 10);
             }
@@ -229,6 +274,12 @@ public class Game
 
         class ScrollListener implements MouseWheelListener
         {
+            /**
+             * Changes the shooting mode of the user when the mouse wheel is scrolled.
+             * 
+             * @param  e  action of scrolling the mouse wheel
+             * @return    void
+             */
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if(component.getShotMode() == 0)
                     component.changeShotMode(1);
@@ -241,6 +292,12 @@ public class Game
 
         class StartGameListener implements ActionListener
         {
+            /**
+             * Starts the game when its button is pressed. Hides the menu and its buttons and focuses the game component. Makes the mouse a crosshair.
+             * 
+             * @param  event  Start Game button press
+             * @return        void
+             */
             public void actionPerformed(ActionEvent event) {
                 menu = false;
                 component.restart();
@@ -257,6 +314,12 @@ public class Game
 
         class ExitGameListener implements ActionListener
         {
+            /**
+             * Closes the game when its button is pressed.
+             * 
+             * @param  event  Exit Game button press
+             * @return        void
+             */
             public void actionPerformed(ActionEvent event) {
                 System.exit(0);
             }
@@ -264,6 +327,12 @@ public class Game
 
         class OptionsGameListener implements ActionListener
         {
+            /**
+             * Goes to the options screen when the options button is pressed. Hides the menu and its buttons and makes the difficulty radio buttons visible. Makes visible the button to go back to the main menu.
+             * 
+             * @param  event  Options button press
+             * @return        void
+             */
             public void actionPerformed(ActionEvent event) {
                 options = true;
                 menu = false;
@@ -281,6 +350,12 @@ public class Game
 
         class RestartGameListener implements ActionListener
         {
+            /**
+             * Restarts the game when the button is made visible after losing.
+             * 
+             * @param  event  Restart button press
+             * @return        void
+             */
             public void actionPerformed(ActionEvent event) {
                 component.restart();
             }
@@ -288,6 +363,12 @@ public class Game
 
         class BackToMenuListener implements ActionListener
         {
+            /**
+             * Goes back to the main menu from the options screen. Makes the options buttons invisible and the main menu visible.
+             * 
+             * @param  event  Back to Menu button press
+             * @return        void
+             */
             public void actionPerformed(ActionEvent event) {
                 menu = true;
                 options = false;
